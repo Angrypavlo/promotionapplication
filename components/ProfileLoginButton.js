@@ -4,20 +4,11 @@ import { View, Button, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { useAuth } from './AuthContext';
 import { Linking } from 'react-native';
 
-const ProfileLoginButton = () => {
+const ProfileLoginButton = ({ navigation }) => {
   const { user } = useAuth();
 
-  const handleLoginPress = async () => {
-    const loginUrl = "https://jubilant-space-disco-qjvjwwvjw6r345p7-8080.app.github.dev/login";
-    // Check if the link is supported
-    const supported = await Linking.canOpenURL(loginUrl);
-
-    if (supported) {
-      // Open the link
-      await Linking.openURL(loginUrl);
-    } else {
-      console.error("Don't know how to open this URL: " + loginUrl);
-    }
+  const handleLoginPress = () => {
+    navigation.navigate('OAuthWebView');
   };
 
   return (

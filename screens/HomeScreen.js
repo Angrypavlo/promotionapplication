@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from 'react-native';
 import { getScreenOptions } from '../components/ScreenOptions';
 import { useAuth } from '../components/AuthContext';
+import OAuthWebView from './LoginScreen';
 
 const HomeStack = createStackNavigator();
 
@@ -24,6 +25,7 @@ function HomeScreen() {
   return (
     <HomeStack.Navigator screenOptions={({ navigation }) => getScreenOptions(navigation)}>
       <HomeStack.Screen name="Home" component={Screen} />
+      <HomeStack.Screen name="OAuthWebView" component={OAuthWebView} />
     </HomeStack.Navigator>
   );
 }

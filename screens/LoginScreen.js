@@ -1,54 +1,47 @@
-import * as React from 'react';
-import { Linking, Button, Alert, SafeAreaView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Assuming you're using AsyncStorage to store the token
+import React from 'react';
+import { WebView } from 'react-native-webview';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Define your deep link prefix
-const DEEP_LINK_PREFIX = 'yourapp://';
+const OAuthWebView = () => {
+  const navigation = useNavigation();
+  const authUrl = 'https://jubilant-space-disco-qjvjwwvjw6r345p7-8080.app.github.dev/login'
 
-const App = () => {
-    React.useEffect(() => {
-        const handleDeepLink = async (event) => {
-            // Extract the token from the URL
-            let { url } = event;
-            if (url.includes('token=')) {
-                let token = url.split('token=')[1];
-                // Store the token securely
-                await AsyncStorage.setItem('userToken', token);
-                Alert.alert('Login Success', 'Token stored successfully!');
-            }
-        };
-        
-        // Listen for incoming deep links
-        Linking.addEventListener('url', handleDeepLink);
-        
-        return () => {
-            Linking.removeEventListener('url', handleDeepLink);
-        };
-    }, []);
-    
-    // Function to initiate the OAuth2 flow
-    const initiateLogin = async () => {
-        try {
-            // Assuming you have the backend URL stored in an environment variable or directly inserted
-            const backendAuthUrl = 'https://yourbackend.com/auth/login';
-            // Attempt to open the URL which will redirect the user to Authentik for login
-            const supported = await Linking.canOpenURL(backendAuthUrl);
-            if (supported) {
-                await Linking.openURL(backendAuthUrl);
-            } else {
-                Alert.alert('Error', 'Can\'t handle backend URL');
-            }
-        } catch (error) {
-            Alert.alert('Error', 'An error occurred');
-        }
-    };
-    
-    return (
-        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Button title="Login with Authentik" onPress={initiateLogin} />
-        </SafeAreaView>
-        );
-    };
-    
-    export default App;
-    
+  const modifiedUserAgent = "Mozilla/5.0 (Linux; Android 12; Pixel 5 Build/SP1A.210812.016) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.130 Mobile Safari/537.36".replace("; wv", "");
+
+  const handleNavigationStateChange = async (newNavState) => {
+    const { url } = newNavState;
+    if (url.includes('callback?code=')) { // Adjust based on your auth provider's redirect URL
+      const code = new URL(url).searchParams.get('code');
+      if (code) {
+        // Now you can exchange this code for a token in your backend or directly if supported
+        await exchangeCodeForToken(code);
+      }
+    }
+  };
+
+  const exchangeCodeForToken = async (code) => {
+    try {
+      const response = await fetch('YOUR_BACKEND_ENDPOINT/exchange', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const { access_token } = await response.json();
+      await AsyncStorage.setItem('access_token', access_token);
+      navigation.goBack(); // or navigate to another screen
+    } catch (error) {
+      console.error('Error exchanging code for token:', error);
+    }
+  };
+
+  return (
+    <WebView 
+      source={{ uri: authUrl }} 
+      onNavigationStateChange={handleNavigationStateChange} 
+      userAgent={modifiedUserAgent} // Apply the modified userAgent
+    />
+  );
+};
+
+export default OAuthWebView;
