@@ -11,12 +11,19 @@ const ProfileLoginButton = ({ navigation }) => {
     navigation.navigate('OAuthWebView');
   };
 
+  // URL to the generic profile picture
+  const genericProfilePicUrl = 'https://avatar.iran.liara.run/public/boy?username=Ash';
+
+  const handleProfilePress = () => {
+    navigation.openDrawer();
+  };
+
   return (
     <View style={styles.container}>
       {user ? (
-        <TouchableOpacity onPress={() => {/* Handle profile action */}}>
+        <TouchableOpacity onPress={handleProfilePress}>
           <Image
-            source={{ uri: user.profilePicture }}
+            source={{ uri: user.profilePicture || genericProfilePicUrl}}
             style={styles.profileImage}
           />
         </TouchableOpacity>
