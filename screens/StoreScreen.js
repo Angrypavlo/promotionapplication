@@ -7,8 +7,10 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 const StoreScreen = () => {
 
+    // points of the user
     const [points, setPoints] = useState(350)
 
+    // items available (for upgrade they could be fetched from a db)
     const [items, setItems] = useState([
         {
             id: '1',
@@ -33,15 +35,20 @@ const StoreScreen = () => {
         }
     ])
 
+    // items bought by the customer
     const [ownedItems, setOwnedItems] = useState([])
 
+    // method to perform when the purchase button of an item (CardStore component) is pressed
     const buyItem = (numPoints, title, id) => {
+
+        // if available points are more than cost of the item proceed with the purchase
         if(points >= numPoints) {
+
+            // update points
             setPoints(points - numPoints)
 
+            // add item to the owned list
             const item = items.find((item) => item.id === id)
-            console.log("Item: " + item.title)
-
             if (item) {
                 if(ownedItems.length > 0){
                     setOwnedItems([...ownedItems, item])
@@ -50,8 +57,8 @@ const StoreScreen = () => {
                     setOwnedItems([item])
                 }
             }
-            console.log("State: " + ownedItems)
         }
+        // if available points are less than cost of the item display an allert
         else {
             Alert.alert("You don't own enough points to buy " + title)
         }

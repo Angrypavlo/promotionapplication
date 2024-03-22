@@ -3,7 +3,15 @@ import React from 'react'
 
 import { Feather } from '@expo/vector-icons';
 
+// Card to display for every item in the store page
 const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) => {
+
+    // title: title of the item to buy
+    // description: description of the item to buy
+    // points: number of point to buy the item
+    // image: URL of the image (does not work for local images)
+    // onBuy: method to perform when the purchase button is clicked
+    // hidePurchase: flag used to hide the purchase button in owned items
 
   return (
     <View style={styles.cardContainer}>
