@@ -1,9 +1,10 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import React from 'react'
 
 import { Feather } from '@expo/vector-icons';
 
-const CardStore = ({ title, description, points, image }) => {
+const CardStore = ({ title, description, points, image, onBuy }) => {
+
   return (
     <View style={styles.cardContainer}>
         <Image 
@@ -20,9 +21,10 @@ const CardStore = ({ title, description, points, image }) => {
                 <Text style={styles.cardTitle}>{title}</Text>   
                 <Text style={styles.cardDescription}>{description}</Text>
             </View>
-                <View style={styles.cardCta}><Feather name="shopping-cart" size={21} color="white" />
+            <Pressable style={styles.cardCta} onPress={onBuy}>
+                <Feather name="shopping-cart" size={21} color="white" />
                 <Text style={styles.cardPoints}>{points} pts</Text>
-            </View>
+            </Pressable>
         </View>
 
     </View>

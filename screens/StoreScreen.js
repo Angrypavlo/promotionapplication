@@ -1,11 +1,13 @@
-import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CardStore from '../components/store/CardStore'
 import { FlatList } from 'react-native-gesture-handler'
 
-const image = '../assets/image-placeholder.jpeg'
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const StoreScreen = () => {
+
+    const [points, setPoints] = useState(250)
 
     const [items, setItems] = useState([
         {
@@ -28,10 +30,25 @@ const StoreScreen = () => {
         }
     ])
 
+    const buyItem = (numPoints, title) => {
+        if(points >= numPoints) {
+            setPoints(points - numPoints)
+        }
+        else {
+            Alert.alert("You don't own enough points to buy " + title)
+        }
+    }
+
   return (
     <SafeAreaView>
         <View style={styles.container}>
-            <Text style={styles.title}>StoreScreen</Text>
+            <View style={styles.header}>
+                <Text style={styles.title}>StoreScreen</Text>
+                <View style={styles.points}>
+                    <FontAwesome5 name="coins" size={20} color="white" />
+                    <Text style={styles.pointsNum}> {points} pts</Text>
+                </View>
+            </View>
 
             <FlatList 
                 style={{
@@ -45,6 +62,7 @@ const StoreScreen = () => {
                         description={item.description} 
                         points={item.points}
                         image={item.image}
+                        onBuy={() => buyItem(item.points, item.title)}
                     />
                 )}
             />
@@ -58,10 +76,27 @@ const styles = StyleSheet.create({
     container: {
         margin: 25,
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
     title: {
         fontSize: 30,
         fontWeight: 'bold',
     },
+    points: {
+        flexDirection: 'row',
+        backgroundColor: '#eab308',
+        padding: 10,
+        borderRadius: 5,
+    },
+    pointsNum: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginLeft: 5,
+    }
 })
 
 export default StoreScreen
