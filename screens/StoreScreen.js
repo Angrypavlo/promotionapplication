@@ -1,31 +1,50 @@
 import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import CardStore from '../components/store/CardStore'
+import { FlatList } from 'react-native-gesture-handler'
+
+const image = '../assets/image-placeholder.jpeg'
 
 const StoreScreen = () => {
+
+    const [items, setItems] = useState([
+        {
+            title: 'Maxima',
+            description: 'Come to maxima for grocery shopping after your run',
+            points: 50,
+            image: 'https://www.maxima.lt/upl/media/762x/04/4034-maxima_ivairus-02.jpg?v=1-0',
+        },
+        {
+            title: 'Caffeine',
+            description: 'Caffeine is the best place to have a brake during your run',
+            points: 30,
+            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBbj5UdbPZHDV0d6-e3IcPSCgIOWX2jTAVHQy8RTja0Q&s',
+        },
+        {
+            title: 'Dzeb Pub',
+            description: 'After your run come for karaoke',
+            points: 70,
+            image: 'https://visit.kaunas.lt/assets/Uploads/_resampled/FillWyIxMDUwIiwiNTI1Il0/dzem-706118336.jpg',
+        }
+    ])
+
   return (
     <SafeAreaView>
         <View style={styles.container}>
             <Text style={styles.title}>StoreScreen</Text>
 
-            {/* <View style={{ flex: 1, justifyContent: 'flex-start' }} /> */}
-            <View style={styles.cardContainer}>
-                <Image 
-                    style={styles.cardImage} 
-                    source={require('../assets/image-placeholder.jpeg')}
-                    resizeMode='cover'
-                />
-                <View style={{
-                    flexDirection: 'row', 
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-                    <Text style={styles.cardTitle}>Title</Text>
-                    <Text>30 pts</Text>
-                </View>
+            <FlatList 
+                data={items}
+                renderItem={({item}) => (
+                    <CardStore 
+                        title={item.title} 
+                        description={item.description} 
+                        points={item.points}
+                        image={item.image}
+                    />
+                )}
+            />
 
-                <Text style={styles.cardDescription}>Description</Text>
-            </View>
-            {/* <View style={{ flex: 1, justifyContent: 'flex-end' }} /> */}
         </View>
     </SafeAreaView>
   )
@@ -39,33 +58,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
     },
-    cardImage: {
-        height: 125,
-        width: '100%',
-        marginBottom: 10,
-        borderRadius: 5,
-    },
-    cardContainer: {
-        padding: 15,
-        marginTop: 15,
-        width: '100%',
-        backgroundColor: '#E4E4E4',
-        borderRadius: 10,
-        // ios
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        // android
-        elevation: 3,
-    },
-    cardTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    cardDescription: {
-
-    }
 })
 
 export default StoreScreen
