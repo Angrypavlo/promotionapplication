@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Feather } from '@expo/vector-icons';
 
-const CardStore = ({ title, description, points, image, onBuy }) => {
+const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) => {
 
   return (
     <View style={styles.cardContainer}>
@@ -17,14 +17,16 @@ const CardStore = ({ title, description, points, image, onBuy }) => {
             justifyContent: 'space-between',
             alignItems: 'flex-end'
         }}>
-            <View style={{width: '65%'}}>
+            <View style={hidePurchase || {width: '65%'}}>
                 <Text style={styles.cardTitle}>{title}</Text>   
                 <Text style={styles.cardDescription}>{description}</Text>
             </View>
+            {hidePurchase 
+            ||
             <Pressable style={styles.cardCta} onPress={onBuy}>
                 <Feather name="shopping-cart" size={21} color="white" />
                 <Text style={styles.cardPoints}>{points} pts</Text>
-            </Pressable>
+            </Pressable>}
         </View>
 
     </View>
