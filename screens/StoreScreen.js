@@ -34,6 +34,10 @@ const StoreScreen = () => {
             <Text style={styles.title}>StoreScreen</Text>
 
             <FlatList 
+                style={{
+                    height: '95%',
+                    marginTop: 10,
+                }}
                 data={items}
                 renderItem={({item}) => (
                     <CardStore 

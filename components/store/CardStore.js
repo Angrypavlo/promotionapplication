@@ -1,6 +1,8 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
 import React from 'react'
 
+import { Feather } from '@expo/vector-icons';
+
 const CardStore = ({ title, description, points, image }) => {
   return (
     <View style={styles.cardContainer}>
@@ -12,13 +14,17 @@ const CardStore = ({ title, description, points, image }) => {
         <View style={{
             flexDirection: 'row', 
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'flex-end'
         }}>
-            <Text style={styles.cardTitle}>{title}</Text>
-            <Text>{points} pts</Text>
+            <View style={{width: '65%'}}>
+                <Text style={styles.cardTitle}>{title}</Text>   
+                <Text style={styles.cardDescription}>{description}</Text>
+            </View>
+                <View style={styles.cardCta}><Feather name="shopping-cart" size={21} color="white" />
+                <Text style={styles.cardPoints}>{points} pts</Text>
+            </View>
         </View>
 
-        <Text style={styles.cardDescription}>{description}</Text>
     </View>
   )
 }
@@ -32,7 +38,7 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         padding: 15,
-        marginTop: 15,
+        marginBottom: 25,
         width: '100%',
         backgroundColor: '#E4E4E4',
         borderRadius: 10,
@@ -45,12 +51,25 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     cardTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 21,
+        fontWeight: '600',
+        marginBottom: 5,
     },
     cardDescription: {
-
+        marginBottom: 2,
     },
+    cardPoints: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: 'white',
+        marginLeft: 10,
+    },
+    cardCta: {
+        flexDirection: 'row',
+        backgroundColor: '#14b8a6',
+        borderRadius: 5,
+        padding: 8,
+    }
 })
 
 export default CardStore
