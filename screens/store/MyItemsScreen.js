@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet, FlatList } from 'react-native'
-import React from 'react'
+import { useStateValue } from './StateContext'
+import CardStore from '../../components/store/CardStore'
+import { ScrollView } from 'react-native-gesture-handler'
 
-const MyItemsScreen = ({ownedItems}) => {
+const MyItemsScreen = ({ navigation }) => {
+
+    const { ownedItems } = useStateValue()
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
         <Text> Owned Items </Text>
 
         <FlatList 
@@ -22,15 +27,14 @@ const MyItemsScreen = ({ownedItems}) => {
             )}
             scrollEnabled={false}
         />
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        marginTop: 25,
+        marginHorizontal: 25,
     }
 })
 

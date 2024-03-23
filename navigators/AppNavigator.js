@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import StoreScreen from '../screens/StoreScreen';
+import StoreScreen from '../screens/store/StoreScreen';
 // import SettingsScreen from '../screens/SettingsScreen';
 
 const Stack = createStackNavigator();
