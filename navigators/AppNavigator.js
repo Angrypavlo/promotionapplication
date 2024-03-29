@@ -5,6 +5,8 @@ import HomeScreen from '../screens/HomeScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import StoreScreen from '../screens/store/StoreScreen';
+import SettingsScreen from '../screens/settingsScreens/MainSettingsScreen';
+
 // import SettingsScreen from '../screens/SettingsScreen';
 
 const Stack = createStackNavigator();
@@ -31,7 +33,7 @@ export const AppNavigator = () => (
     >
         <Tab.Screen name="Store" component={StoreScreen} />
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Settings" component={HomeScreen} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
 );
 

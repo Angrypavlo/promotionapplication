@@ -11,7 +11,7 @@ const MainStoreScreen = ({navigation, route}) => {
     const { points, items, buyItem } = useStateValue()
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: '#98FB98'}}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.points}>
