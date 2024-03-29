@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     access_token: "",
     refresh_token: ""
   });
+  const [coinCount, setCoinCount] = useState(0);
 
   // Function to update both user and tokens
   const authenticate = async (userData, tokens) => {
@@ -29,11 +30,13 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('userToken');
       await AsyncStorage.removeItem('refreshToken');
+      await AsyncStorage.removeItem('coinCount');
       setUser(null);
       setAuthTokens({
         access_token: "",
         refresh_token: ""
       });
+      setCoinCount(0);
     } catch (e) {
       console.error('Removing token failed', e);
     }
@@ -42,16 +45,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Extend bootstrapAsync to retrieve both user token and refresh token
     const bootstrapAsync = async () => {
-      let accessToken, refreshToken;
+      let accessToken, refreshToken, storedCoinCount;
       try {
         accessToken = await AsyncStorage.getItem('userToken');
         refreshToken = await AsyncStorage.getItem('refreshToken');
+        storedCoinCount = await AsyncStorage.getItem('coinCount');
       } catch (e) {
         console.error('Restoring token failed', e);
       }
 
       if (accessToken && refreshToken) {
         setAuthTokens({ access_token: accessToken, refresh_token: refreshToken });
+        setCoinCount(storedCoinCount ? parseInt(storedCoinCount) : 0);
         // Optionally, validate the token and load user profile here
       }
     };
@@ -59,8 +64,18 @@ export const AuthProvider = ({ children }) => {
     bootstrapAsync();
   }, []);
 
+  const updateCoinCount = async (newCount) => {
+    try {
+      if (user === null) return; // Check if user is logged in 
+      await AsyncStorage.setItem('coinCount', newCount.toString()); // Store coin count in AsyncStorage
+      setCoinCount(newCount); // Update coin count in state
+    } catch (e) {
+      console.error('Storing coin count failed', e);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, authTokens, authenticate, logout }}>
+    <AuthContext.Provider value={{ user, authTokens, authenticate, logout, updateCoinCount, coinCount }}>
       {children}
     </AuthContext.Provider>
   );
