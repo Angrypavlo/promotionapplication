@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
+import EmptyScreen from '../screens/EmptyScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import SettingsScreen from '../screens/SettingsScreen';
@@ -28,9 +29,9 @@ export const AppNavigator = () => (
             headerShown: false,
         })}
     >
-        <Tab.Screen name="Store" component={HomeScreen} />
+        <Tab.Screen name="Store" component={EmptyScreen} />
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Settings" component={HomeScreen} />
+        <Tab.Screen name="Settings" component={EmptyScreen} />
     </Tab.Navigator>
 );
 
