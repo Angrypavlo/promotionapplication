@@ -14,7 +14,9 @@ const TestMapScreen = () => {
   const destination = { latitude: 44.49, longitude: 11.3426 };
   const GOOGLE_MAPS_APIKEY = "AIzaSyD5OoHQxXav-GPGJ4JsXBcswbZZ_Gri9tE";
 
-  [coords, setCoords] = useState([]);
+  const [coords, setCoords] = useState([]);
+  const [duration, setDuration] = useState(null);
+  const [popupCoordinate, setPopupCoordinate] = useState(null);
 
   return (
     <View>
@@ -44,15 +46,23 @@ const TestMapScreen = () => {
         {coords.map((coord, index) => (
           <Marker key={index.toString()} coordinate={coord} />
         ))}
-        {coords[0] && coords[1] && <MapViewDirections
+        {coords[0] && coords[1] && (
+          <MapViewDirections
             origin={coords[0]}
-            destination={coords[coords.length-1]}
-            waypoints={coords.slice(1, coords.length-1)}
+            destination={coords[coords.length - 1]}
+            waypoints={coords.slice(1, coords.length - 1)}
             apikey={GOOGLE_MAPS_APIKEY}
             mode="WALKING"
             strokeWidth={5}
             strokeColor="hotpink"
-        />}
+            onReady={(result) => {
+              setDuration(result.duration);
+              console.log(duration)
+              setPopupCoordinate(result.coordinates[Math.floor(result.coordinates.length / 2)]);
+              console.log(popupCoordinate)
+            }}
+          />
+        )}
         <Circle
           center={x}
           radius={100}
@@ -60,6 +70,15 @@ const TestMapScreen = () => {
           strokeColor="#dc2626"
           fillColor="#rgba(239, 68, 68, 0.5)"
         />
+        {duration && popupCoordinate && (
+          <Marker coordinate={popupCoordinate}>
+            <View
+              style={{ backgroundColor: "white", padding: 10, borderRadius: 5 }}
+            >
+              <Text>Duration: {Math.round(duration)} min</Text>
+            </View>
+          </Marker>
+        )}
       </MapView>
     </View>
   );
