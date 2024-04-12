@@ -8,7 +8,9 @@ const ProfileLoginButton = ({ navigation }) => {
   const { user } = useAuth();
 
   const handleLoginPress = () => {
-    navigation.navigate('OAuthWebView');
+    // navigation.navigate('OAuthWebView');
+
+    navigation.navigate('Profile');
   };
 
   // URL to the generic profile picture

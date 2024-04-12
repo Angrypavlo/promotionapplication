@@ -4,6 +4,11 @@ import { View, Text, StyleSheet, Dimensions, Button, Modal, Pressable, Animated 
 import { getScreenOptions } from '../components/ScreenOptions';
 import { useAuth } from '../components/AuthContext';
 import OAuthScreen from './LoginScreen';
+import ProfileScreen from '../screens/profileScreens/ProfileScreen.js';
+import EditProfileScreen from './profileScreens/EditProfileScreen.js';
+
+import { Ionicons } from '@expo/vector-icons';
+
 import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import haversine from 'haversine';
 import Icon from 'react-native-vector-icons/Feather';
@@ -267,7 +272,22 @@ function HomeScreen() {
   return (
     <HomeStack.Navigator screenOptions={({ navigation }) => getScreenOptions(navigation)}>
       <HomeStack.Screen name="Home" component={Screen} />
-      <HomeStack.Screen name="OAuthWebView" component={OAuthScreen} />
+      {/* <HomeStack.Screen name="OAuthWebView" component={OAuthScreen}  /> */}
+      <HomeStack.Screen name="Profile" component={ProfileScreen}
+      initialParams={{
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        profileImagePhoto: require('../screens/images/BlankProfileImage.png')
+      }} />
+      <HomeStack.Screen name="EditProfile" component={EditProfileScreen}
+      // initialParams={{
+      //   name: 'John Doe',
+      //   email: 'john.doe@example.com',
+      //   bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      //   profileImagePhoto: require('../screens/images/BlankProfileImage.png')
+      // }} 
+      />
     </HomeStack.Navigator>
   );
 }
