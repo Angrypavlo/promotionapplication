@@ -1,11 +1,13 @@
 import React, { createContext, useState } from 'react';
 import { Alert } from 'react-native';
+import { useAuth } from '../../components/AuthContext';
 
 const StateContext = createContext();
 
 export const StateProvider = ({ children }) => {
-  // points of the user
-  const [points, setPoints] = useState(350)
+  // user
+  const { user } = useAuth();
+  const coins = user ? user.coins : 0
 
   // items available (for upgrade they could be fetched from a db)
   const [items, setItems] = useState([
@@ -38,11 +40,13 @@ export const StateProvider = ({ children }) => {
   // method to perform when the purchase button of an item (CardStore component) is pressed
   const buyItem = (numPoints, title, id) => {
 
+    if(user){
+
       // if available points are more than cost of the item proceed with the purchase
-      if(points >= numPoints) {
+      if(user.coins >= numPoints) {
 
           // update points
-          setPoints(points - numPoints)
+          user.coins = coins - numPoints
 
           // add item to the owned list
           const item = items.find((item) => item.id === id)
@@ -59,10 +63,14 @@ export const StateProvider = ({ children }) => {
       else {
           Alert.alert("You don't own enough points to buy " + title)
       }
+    }
+    else{
+        Alert.alert("Login to be able to buy stuff")
+    }
   }
 
   return (
-    <StateContext.Provider value={{ points, items, ownedItems, buyItem }}>
+    <StateContext.Provider value={{ coins, items, ownedItems, buyItem }}>
       {children}
     </StateContext.Provider>
   );

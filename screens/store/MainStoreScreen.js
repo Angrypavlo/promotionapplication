@@ -5,10 +5,11 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import CardStore from '../../components/store/CardStore';
 import { useStateValue } from './StateContext';
+import { useAuth } from '../../components/AuthContext';
 
 const MainStoreScreen = ({navigation, route}) => {
 
-    const { points, items, buyItem } = useStateValue()
+    const { coins, items, buyItem } = useStateValue()
 
   return (
     <SafeAreaView style={{backgroundColor: '#98FB98'}}>
@@ -16,7 +17,7 @@ const MainStoreScreen = ({navigation, route}) => {
             <View style={styles.header}>
                 <View style={styles.points}>
                     <FontAwesome5 name="coins" size={20} color="white" />
-                    <Text style={styles.pointsNum}> {points} pts</Text>
+                    <Text style={styles.pointsNum}> {coins} coins</Text>
                 </View>
                 <Pressable onPress={() => navigation.navigate("My Items")}>
                     <Feather name="list" size={24} color="black"/>
