@@ -1,16 +1,37 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { View, Text, StyleSheet, Dimensions, Button, Modal, Pressable, Animated } from 'react-native';
-import { getScreenOptions } from '../components/ScreenOptions';
-import { useAuth } from '../components/AuthContext';
-import OAuthScreen from './LoginScreen';
-import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
-import haversine from 'haversine';
-import Icon from 'react-native-vector-icons/Feather';
+import React, { useEffect, useState, useRef } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Button,
+  Modal,
+  Pressable,
+  Animated,
+} from "react-native";
+import { getScreenOptions } from "../components/ScreenOptions";
+import { useAuth } from "../components/AuthContext";
+import OAuthScreen from "./LoginScreen";
 
-import { useLocationTracker } from '../components/StatsTracking/useLocationTracker';
+import MapView, {
+  PROVIDER_GOOGLE,
+  Polyline,
+  Circle,
+  Marker,
+} from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
+import { useLocationTracker } from "../components/StatsTracking/useLocationTracker";
+import * as Location from "expo-location";
+// import { GOOGLE_MAPS_APIKEY } from '@env';
 
-import { formatTime } from '../components/Utils';
+const GOOGLE_MAPS_APIKEY = "AIzaSyD5OoHQxXav-GPGJ4JsXBcswbZZ_Gri9tE";
+
+import Icon from "react-native-vector-icons/Feather";
+
+import { formatTime } from "../components/Utils";
+
+const MAIN_COLOR = "#22c55e";
 
 const HomeStack = createStackNavigator();
 const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
@@ -21,7 +42,7 @@ const calculateBounds = (path) => {
   let minLng = Infinity;
   let maxLng = -Infinity;
 
-  path.forEach(point => {
+  path.forEach((point) => {
     minLat = Math.min(minLat, point.latitude);
     maxLat = Math.max(maxLat, point.latitude);
     minLng = Math.min(minLng, point.longitude);
@@ -40,8 +61,8 @@ const getRegionForPath = (path) => {
   // Add some padding to the deltas
   const padding = 0.05;
   return {
-    latitude: minLat + (latDelta / 2),
-    longitude: minLng + (lngDelta / 2),
+    latitude: minLat + latDelta / 2,
+    longitude: minLng + lngDelta / 2,
     latitudeDelta: latDelta + padding,
     longitudeDelta: lngDelta + padding,
   };
@@ -62,7 +83,16 @@ const calculateAverageSpeed = (totalDistance, elapsedTime) => {
 
 const Screen = ({ navigation }) => {
   const { user } = useAuth();
-  const { region, path, speed, timer, toggleTracking, totalDistance, isTracking, coinCount } = useLocationTracker();
+  const {
+    region,
+    path,
+    speed,
+    timer,
+    toggleTracking,
+    totalDistance,
+    isTracking,
+    coinCount,
+  } = useLocationTracker();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -74,12 +104,12 @@ const Screen = ({ navigation }) => {
   const [buttonAnimation] = useState(new Animated.Value(1));
   const handlePressIn = () => {
     Animated.spring(buttonAnimation, {
-      toValue: 0.90,
+      toValue: 0.9,
       useNativeDriver: true,
       speed: 40, // Increase speed for a more rapid animation
     }).start();
   };
-  
+
   const handlePressOut = () => {
     Animated.spring(buttonAnimation, {
       toValue: 1, // Return to original size
@@ -100,7 +130,7 @@ const Screen = ({ navigation }) => {
       });
     }
   }, [mapReady, path]);
-  
+
   const handleStopTracking = () => {
     const currentTime = timer;
     setElapsedTime(currentTime);
@@ -109,6 +139,42 @@ const Screen = ({ navigation }) => {
     const avgSpeed = calculateAverageSpeed(totalDistance, currentTime);
     setAverageSpeed(avgSpeed); // Store the average speed
     setModalVisible(true); // Show the modal with the map and stats
+  };
+
+  // HOT ZONES
+  // coordinates of the hot zone
+  const [x, setX] = useState({
+    latitude: 54.893,
+    longitude: 23.903,
+  });
+  const [focusedX, setFocusedX] = useState(false);
+
+  // route duration
+  const [duration, setDuration] = useState(null);
+  const [popupCoordinate, setPopupCoordinate] = useState(null);
+
+  // user location
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  // get user location at load
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  const goToTheHotArea = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    setFocusedX(!focusedX);
   };
 
   return (
@@ -128,38 +194,88 @@ const Screen = ({ navigation }) => {
               strokeWidth={3}
             />
           )}
+
+          {focusedX && (
+            <MapViewDirections
+              origin={location.coords}
+              destination={x}
+              apikey={GOOGLE_MAPS_APIKEY}
+              mode="WALKING"
+              strokeWidth={5}
+              strokeColor="#22c55e"
+              onReady={(result) => {
+                setDuration(result.duration);
+                setPopupCoordinate(
+                  result.coordinates[Math.floor(result.coordinates.length / 2)]
+                );
+              }}
+            />
+          )}
+          <Circle
+            center={x}
+            radius={200}
+            strokeWidth={3}
+            strokeColor="#16a34a"
+            fillColor="#rgba(74, 222, 128, 0.5)"
+          />
+          {focusedX && <Marker coordinate={x} />}
+          {focusedX && duration && popupCoordinate && (
+            <Marker coordinate={popupCoordinate}>
+              <View
+                style={{
+                  backgroundColor: "#15803d",
+                  padding: 5,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  {Math.round(duration)} min
+                </Text>
+              </View>
+            </Marker>
+          )}
         </MapView>
+      )}
+      {isTracking && (
+        <View style={styles.infoContainer}>
+          <Text style={[styles.infoValue, styles.infoMainValue]}>
+            {formatTime(timer)}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.infoValue}>{totalDistance.toFixed(2)} km</Text>
+            <Text style={styles.infoValue}>
+              {speed ? (speed * 3.6).toFixed(2) : "0.00"} km/h
+            </Text>
+            <Text style={styles.infoValue}>{coinCount} coins</Text>
+          </View>
+        </View>
       )}
       <View style={styles.textContainer}>
         <Text>Home Screen</Text>
-        <Text>Logged in: {user ? 'Yes' : 'No'}</Text>
+        <Text>Logged in: {user ? "Yes" : "No"}</Text>
         {user && user.email && <Text>Email: {user.email}</Text>}
       </View>
-      <View style={styles.infoContainer}>
-        {isTracking && (
-          <>
-            <Text>Timer: {formatTime(timer)}</Text>
-            <Text>Distance: {totalDistance.toFixed(2)} km</Text>
-            <Text>Speed: {speed ? (speed * 3.6).toFixed(2) : "0.00"} km/h</Text>
-            <Text>Coins Collected: {coinCount}</Text>
-          </>
-        )}
+      <View style={styles.buttonContainer}>
         <AnimatedTouchable
           style={[
             styles.button,
             {
-              transform: [
-                { scale: buttonAnimation },
-              ],
-            },        
+              transform: [{ scale: buttonAnimation }],
+            },
           ]}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={isTracking ? handleStopTracking : toggleTracking}
         >
-          <Icon name="navigation" size={30} color="#009933" />
+          <Icon name="navigation" size={30} color="white" />
           <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
         </AnimatedTouchable>
+
+        <Pressable style={styles.secondaryButton} onPress={goToTheHotArea}>
+          <Text style={styles.secondaryButtonText}>
+            {focusedX ? "Stop navigation" : "Go to the Hot Area"}
+          </Text>
+        </Pressable>
       </View>
       <Modal
         animationType="slide"
@@ -185,10 +301,16 @@ const Screen = ({ navigation }) => {
             />
           )}
         </MapView>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <Text style={styles.modalText}>Time: {formatTime(elapsedTime)}</Text>
-          <Text style={styles.modalText}>Distance: {totalDistance.toFixed(2)} km</Text>
-          <Text style={styles.modalText}>Average Speed: {averageSpeed.toFixed(2)} km/h</Text>
+          <Text style={styles.modalText}>
+            Distance: {totalDistance.toFixed(2)} km
+          </Text>
+          <Text style={styles.modalText}>
+            Average Speed: {averageSpeed.toFixed(2)} km/h
+          </Text>
           <Text style={styles.modalText}>Coins Collected: {coinCount}</Text>
           <Button
             title="Close"
@@ -206,67 +328,109 @@ const Screen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   mapModal: {
-    width: '100%',
-    height: '75%',
+    width: "100%",
+    height: "75%",
   },
   textContainer: {
-    position: 'absolute',
-    top: 50,
-    alignItems: 'center',
+    position: "absolute",
+    bottom: 200,
+    alignItems: "center",
   },
-  infoContainer: {
-    position: 'absolute',
-    bottom: 50,
-    alignItems: 'center',
+  buttonContainer: {
+    position: "absolute",
+    bottom: 40,
+    alignItems: "center",
   },
   modalView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalText: {
     marginVertical: 10, // This ensures there is some space between the text and other elements
   },
   button: {
-    backgroundColor: '#fff',
+    backgroundColor: MAIN_COLOR,
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 35,
-    borderWidth: 2,
-    borderColor: '#009933',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 30,
-    shadowColor: '#000',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     width: 160,
     height: 70,
+    marginBottom: 20,
+  },
+  secondaryButton: {
+    backgroundColor: "white",
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 25,
+    paddingVertical: 15,
   },
   buttonText: {
     marginLeft: 10,
-    fontSize: 16,
-    color: '#009933',
+    fontWeight: "bold",
+    fontSize: 18,
+    color: "white",
+  },
+  secondaryButtonText: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: MAIN_COLOR,
+  },
+  infoContainer: {
+    position: "absolute",
+    top: 20,
+    backgroundColor: "white",
+    alignItems: "center",
+    padding: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  infoValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 5,
+    marginHorizontal: 5,
+  },
+  infoMainValue: {
+    color: MAIN_COLOR,
+    fontSize: 30,
   },
 });
 
 function HomeScreen() {
   return (
-    <HomeStack.Navigator screenOptions={({ navigation }) => getScreenOptions(navigation)}>
-      <HomeStack.Screen name="Home" component={Screen} />
+    <HomeStack.Navigator
+      screenOptions={({ navigation }) => getScreenOptions(navigation)}
+    >
+      <HomeStack.Screen
+        name="Map"
+        component={Screen}
+        options={{ title: "Home" }}
+      />
       <HomeStack.Screen name="OAuthWebView" component={OAuthScreen} />
     </HomeStack.Navigator>
   );
@@ -274,287 +438,286 @@ function HomeScreen() {
 
 export default HomeScreen;
 
-const testStyle =
-[
+const testStyle = [
   {
-    "elementType": "geometry",
-    "stylers": [
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#ebe3cd"
-      }
-    ]
+        color: "#ebe3cd",
+      },
+    ],
   },
   {
-    "elementType": "labels.text.fill",
-    "stylers": [
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#523735"
-      }
-    ]
+        color: "#523735",
+      },
+    ],
   },
   {
-    "elementType": "labels.text.stroke",
-    "stylers": [
+    elementType: "labels.text.stroke",
+    stylers: [
       {
-        "color": "#f5f1e6"
-      }
-    ]
+        color: "#f5f1e6",
+      },
+    ],
   },
   {
-    "featureType": "administrative",
-    "elementType": "geometry.stroke",
-    "stylers": [
+    featureType: "administrative",
+    elementType: "geometry.stroke",
+    stylers: [
       {
-        "color": "#c9b2a6"
-      }
-    ]
+        color: "#c9b2a6",
+      },
+    ],
   },
   {
-    "featureType": "administrative.land_parcel",
-    "stylers": [
+    featureType: "administrative.land_parcel",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "administrative.land_parcel",
-    "elementType": "geometry.stroke",
-    "stylers": [
+    featureType: "administrative.land_parcel",
+    elementType: "geometry.stroke",
+    stylers: [
       {
-        "color": "#dcd2be"
-      }
-    ]
+        color: "#dcd2be",
+      },
+    ],
   },
   {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "administrative.land_parcel",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#ae9e90"
-      }
-    ]
+        color: "#ae9e90",
+      },
+    ],
   },
   {
-    "featureType": "administrative.neighborhood",
-    "stylers": [
+    featureType: "administrative.neighborhood",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "landscape.natural",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "landscape.natural",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#dfd2ae"
-      }
-    ]
+        color: "#dfd2ae",
+      },
+    ],
   },
   {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "poi",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#dfd2ae"
-      }
-    ]
+        color: "#dfd2ae",
+      },
+    ],
   },
   {
-    "featureType": "poi",
-    "elementType": "labels.text",
-    "stylers": [
+    featureType: "poi",
+    elementType: "labels.text",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#93817c"
-      }
-    ]
+        color: "#93817c",
+      },
+    ],
   },
   {
-    "featureType": "poi.business",
-    "stylers": [
+    featureType: "poi.business",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "poi.park",
-    "elementType": "geometry.fill",
-    "stylers": [
+    featureType: "poi.park",
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#a5b076"
-      }
-    ]
+        color: "#a5b076",
+      },
+    ],
   },
   {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#447530"
-      }
-    ]
+        color: "#447530",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#f5f1e6"
-      }
-    ]
+        color: "#f5f1e6",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "labels",
-    "stylers": [
+    featureType: "road",
+    elementType: "labels",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "labels.icon",
-    "stylers": [
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "road.arterial",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "road.arterial",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#fdfcf8"
-      }
-    ]
+        color: "#fdfcf8",
+      },
+    ],
   },
   {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#f8c967"
-      }
-    ]
+        color: "#f8c967",
+      },
+    ],
   },
   {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
-    "stylers": [
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [
       {
-        "color": "#e9bc62"
-      }
-    ]
+        color: "#e9bc62",
+      },
+    ],
   },
   {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "road.highway.controlled_access",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#e98d58"
-      }
-    ]
+        color: "#e98d58",
+      },
+    ],
   },
   {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry.stroke",
-    "stylers": [
+    featureType: "road.highway.controlled_access",
+    elementType: "geometry.stroke",
+    stylers: [
       {
-        "color": "#db8555"
-      }
-    ]
+        color: "#db8555",
+      },
+    ],
   },
   {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "road.local",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#806b63"
-      }
-    ]
+        color: "#806b63",
+      },
+    ],
   },
   {
-    "featureType": "transit",
-    "stylers": [
+    featureType: "transit",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "transit.line",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#dfd2ae"
-      }
-    ]
+        color: "#dfd2ae",
+      },
+    ],
   },
   {
-    "featureType": "transit.line",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "transit.line",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#8f7d77"
-      }
-    ]
+        color: "#8f7d77",
+      },
+    ],
   },
   {
-    "featureType": "transit.line",
-    "elementType": "labels.text.stroke",
-    "stylers": [
+    featureType: "transit.line",
+    elementType: "labels.text.stroke",
+    stylers: [
       {
-        "color": "#ebe3cd"
-      }
-    ]
+        color: "#ebe3cd",
+      },
+    ],
   },
   {
-    "featureType": "transit.station",
-    "elementType": "geometry",
-    "stylers": [
+    featureType: "transit.station",
+    elementType: "geometry",
+    stylers: [
       {
-        "color": "#dfd2ae"
-      }
-    ]
+        color: "#dfd2ae",
+      },
+    ],
   },
   {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [
+    featureType: "water",
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#b9d3c2"
-      }
-    ]
+        color: "#b9d3c2",
+      },
+    ],
   },
   {
-    "featureType": "water",
-    "elementType": "labels.text",
-    "stylers": [
+    featureType: "water",
+    elementType: "labels.text",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [
       {
-        "color": "#92998d"
-      }
-    ]
-  }
-]
+        color: "#92998d",
+      },
+    ],
+  },
+];
