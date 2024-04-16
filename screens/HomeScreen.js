@@ -10,6 +10,7 @@ import {
   Modal,
   Pressable,
   Animated,
+  Platform,
 } from "react-native";
 import { getScreenOptions } from "../components/ScreenOptions";
 import { useAuth } from "../components/AuthContext";
@@ -211,8 +212,8 @@ const Screen = ({ navigation }) => {
     {
       name: "pippo3",
       coordinate: {
-        latitude: 54.902,
-        longitude: 23.923,
+        latitude: 54.901,
+        longitude: 23.924,
       },
     },
   ];
@@ -221,9 +222,17 @@ const Screen = ({ navigation }) => {
     updatedUsers.map(({ name, coordinate }) => {
       const updUser = users.find((user) => user.name == name);
       if (updUser) {
-        updUser.coordinate
-          .timing(coordinate)
-          .start();
+        if(Platform.OS == 'ios'){
+          updUser.coordinate
+            .timing({...coordinate, duration: 10})
+            .start();
+        }
+        else if(Platform.OS == 'android') {
+          if(Platform.OS == 'ios')
+          updUser.coordinate
+            .timing({...coordinate, duration: 500})
+            .start();
+        }
       }
       else {
         setUsers(prevUsers => [...prevUsers,{
