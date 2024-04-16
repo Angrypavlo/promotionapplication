@@ -32,6 +32,9 @@ import * as Location from "expo-location";
 import UserMarker from "../components/Home/Map/userMarker";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
+import { Easing } from "react-native-reanimated";
+import { AnimatedMarker, useAnimatedRegion } from "../hooks/useAnimatedRegion";
+
 // maps components
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyD5OoHQxXav-GPGJ4JsXBcswbZZ_Gri9tE";
@@ -186,14 +189,14 @@ const Screen = ({ navigation }) => {
   const [users, setUsers] = useState([
     {
       name: "pippo1",
-      coordinate: new AnimatedRegion({
+      coordinate: new useAnimatedRegion({
         latitude: 54.897,
         longitude: 23.925,
       }),
     },
     {
       name: "pippo2",
-      coordinate: new AnimatedRegion({
+      coordinate: new useAnimatedRegion({
         latitude: 54.901,
         longitude: 23.921,
       }),
@@ -205,31 +208,38 @@ const Screen = ({ navigation }) => {
       name: "pippo1",
       coordinate: {
         latitude: 54.896,
-        longitude: 23.925,
+        longitude: 23.924,
       },
     },
     {
-      name: "pippo3",
+      name: "pippo2",
       coordinate: {
-        latitude: 54.902,
-        longitude: 23.923,
+        latitude: 54.901,
+        longitude: 23.922,
       },
     },
   ];
 
   const updateOtherUsers = () => {
+
     updatedUsers.map(({ name, coordinate }) => {
-      const updUser = users.find((user) => user.name == name);
-      if (updUser) {
-        updUser.coordinate
-          .timing(coordinate)
-          .start();
-      }
-      else {
-        setUsers(prevUsers => [...prevUsers,{
-          name: name,
-          coordinate: new AnimatedRegion(coordinate),
-        }])
+      const user = users.find((user) => user.name == name);
+      if (user) {
+        console.log(user);
+        user.coordinate.animate({
+          latitude: coordinate.latitude,
+          longitude: coordinate.longitude,
+          duration: 1000,
+          easing: Easing.linear,
+        });
+      } else {
+        setUsers((prevUsers) => [
+          ...prevUsers,
+          {
+            name: name,
+            coordinate: new useAnimatedRegion(coordinate),
+          },
+        ]);
       }
     });
   };
@@ -255,11 +265,9 @@ const Screen = ({ navigation }) => {
           {users.length > 0 &&
             users.map(({ name, coordinate }) => {
               return (
-                <Marker.Animated
-                  coordinate={coordinate}
-                >
+                <AnimatedMarker animatedProps={coordinate.props}>
                   <UserMarker name={name} />
-                </Marker.Animated>
+                </AnimatedMarker>
               );
             })}
 
