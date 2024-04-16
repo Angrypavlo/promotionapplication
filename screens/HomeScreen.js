@@ -1,3 +1,4 @@
+// general imports
 import React, { useEffect, useState, useRef } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -13,24 +14,27 @@ import {
 import { getScreenOptions } from "../components/ScreenOptions";
 import { useAuth } from "../components/AuthContext";
 import OAuthScreen from "./LoginScreen";
+import Icon from "react-native-vector-icons/Feather";
+import { formatTime } from "../components/Utils";
 
+// map imports
 import MapView, {
   PROVIDER_GOOGLE,
   Polyline,
   Circle,
   Marker,
+  Callout,
+  AnimatedRegion,
 } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useLocationTracker } from "../components/StatsTracking/useLocationTracker";
 import * as Location from "expo-location";
+import UserMarker from "../components/Home/Map/userMarker";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
+// maps components
+
 const GOOGLE_MAPS_APIKEY = "AIzaSyD5OoHQxXav-GPGJ4JsXBcswbZZ_Gri9tE";
-
-import Icon from "react-native-vector-icons/Feather";
-
-import { formatTime } from "../components/Utils";
-
 const MAIN_COLOR = "#22c55e";
 
 const HomeStack = createStackNavigator();
@@ -141,7 +145,8 @@ const Screen = ({ navigation }) => {
     setModalVisible(true); // Show the modal with the map and stats
   };
 
-  // HOT ZONES
+  // ==================================== HOT ZONES =====================================
+
   // coordinates of the hot zone
   const [x, setX] = useState({
     latitude: 54.893,
@@ -177,6 +182,58 @@ const Screen = ({ navigation }) => {
     setFocusedX(!focusedX);
   };
 
+  // ==================================== OTHER USERS =====================================
+  const [users, setUsers] = useState([
+    {
+      name: "pippo1",
+      coordinate: new AnimatedRegion({
+        latitude: 54.897,
+        longitude: 23.925,
+      }),
+    },
+    {
+      name: "pippo2",
+      coordinate: new AnimatedRegion({
+        latitude: 54.901,
+        longitude: 23.921,
+      }),
+    },
+  ]);
+
+  const updatedUsers = [
+    {
+      name: "pippo1",
+      coordinate: {
+        latitude: 54.896,
+        longitude: 23.925,
+      },
+    },
+    {
+      name: "pippo3",
+      coordinate: {
+        latitude: 54.902,
+        longitude: 23.923,
+      },
+    },
+  ];
+
+  const updateOtherUsers = () => {
+    updatedUsers.map(({ name, coordinate }) => {
+      const updUser = users.find((user) => user.name == name);
+      if (updUser) {
+        updUser.coordinate
+          .timing(coordinate)
+          .start();
+      }
+      else {
+        setUsers(prevUsers => [...prevUsers,{
+          name: name,
+          coordinate: new AnimatedRegion(coordinate),
+        }])
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       {region && (
@@ -194,6 +251,17 @@ const Screen = ({ navigation }) => {
               strokeWidth={3}
             />
           )}
+
+          {users.length > 0 &&
+            users.map(({ name, coordinate }) => {
+              return (
+                <Marker.Animated
+                  coordinate={coordinate}
+                >
+                  <UserMarker name={name} />
+                </Marker.Animated>
+              );
+            })}
 
           {focusedX && (
             <MapViewDirections
@@ -236,6 +304,7 @@ const Screen = ({ navigation }) => {
           )}
         </MapView>
       )}
+
       {isTracking && (
         <View style={styles.infoContainer}>
           <Text style={[styles.infoValue, styles.infoMainValue]}>
@@ -250,11 +319,11 @@ const Screen = ({ navigation }) => {
           </View>
         </View>
       )}
-      <View style={styles.textContainer}>
+      {/* <View style={styles.textContainer}>
         <Text>Home Screen</Text>
         <Text>Logged in: {user ? "Yes" : "No"}</Text>
         {user && user.email && <Text>Email: {user.email}</Text>}
-      </View>
+      </View> */}
       <View style={styles.buttonContainer}>
         <AnimatedTouchable
           style={[
@@ -277,6 +346,17 @@ const Screen = ({ navigation }) => {
           </Text>
         </Pressable>
       </View>
+      <Pressable
+        style={{
+          position: "absolute",
+          bottom: 20,
+          right: 20,
+          width: 50,
+          height: 50,
+          backgroundColor: "white",
+        }}
+        onPress={() => updateOtherUsers()}
+      ></Pressable>
       <Modal
         animationType="slide"
         transparent={false}
