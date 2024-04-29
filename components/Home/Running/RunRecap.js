@@ -1,10 +1,11 @@
-import { View, Text, Button, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { formatTime } from "../../Utils/Utils";
 import StartMarker from "../Map/startMarker";
 import EndMarker from "../Map/endMarker";
 import { AntDesign } from "@expo/vector-icons";
+import ButtonWrapper from "../../Utils/ButtonWrapper";
 
 const calculateBounds = (path) => {
   let minLat = Infinity;
@@ -105,9 +106,9 @@ const RunRecap = ({
         </View>
         <View style={{ height: 80}} />
       </View>
-      <Pressable style={styles.closeBut} onPress={onDismiss}>
+      <ButtonWrapper style={styles.closeBut} onPress={onDismiss}>
         <AntDesign name="close" size={32} color="black" />
-      </Pressable>
+      </ButtonWrapper>
     </View>
   );
 };

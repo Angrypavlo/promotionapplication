@@ -2,6 +2,7 @@ import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import React from 'react'
 
 import { Feather } from '@expo/vector-icons';
+import ButtonWrapper from '../Utils/ButtonWrapper';
 
 // Card to display for every item in the store page
 const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) => {
@@ -31,10 +32,10 @@ const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) =
             </View>
             {hidePurchase 
             ||
-            <Pressable style={styles.cardCta} onPress={onBuy}>
+            <ButtonWrapper style={styles.cardCta} onPress={onBuy}>
                 <Feather name="shopping-cart" size={21} color="white" />
                 <Text style={styles.cardPoints}>{points} pts</Text>
-            </Pressable>}
+            </ButtonWrapper>}
         </View>
 
     </View>

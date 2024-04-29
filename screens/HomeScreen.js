@@ -296,11 +296,11 @@ const Screen = ({ navigation }) => {
             <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
         </ButtonWrapper>
 
-        <Pressable style={styles.secondaryButton} onPress={goToTheHotArea}>
+        <ButtonWrapper style={styles.secondaryButton} onPress={goToTheHotArea}>
           <Text style={styles.secondaryButtonText}>
             {focusedX ? "Stop navigation" : "Go to the Hot Area"}
           </Text>
-        </Pressable>
+        </ButtonWrapper>
       </View>
       <Pressable
         style={{
