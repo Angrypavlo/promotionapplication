@@ -112,8 +112,8 @@ const Screen = ({ navigation }) => {
 
   // coordinates of the hot zone
   const [x, setX] = useState({
-    latitude: 54.893,
-    longitude: 23.903,
+    latitude: 37.32,
+    longitude: -122.02,
   });
   const [focusedX, setFocusedX] = useState(false);
 
@@ -297,13 +297,13 @@ const Screen = ({ navigation }) => {
         <Text>Logged in: {user ? "Yes" : "No"}</Text>
         {user && user.email && <Text>Email: {user.email}</Text>}
       </View> */}
-        <ButtonWrapper
-          style={styles.button}
-          onPress={isTracking ? handleStopTracking : toggleTracking}
-        >
-          <Icon name="navigation" size={30} color="white" />
-          <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
-        </ButtonWrapper>
+      <ButtonWrapper
+        style={styles.button}
+        onPress={isTracking ? handleStopTracking : toggleTracking}
+      >
+        <Icon name="navigation" size={30} color="white" />
+        <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
+      </ButtonWrapper>
 
       <ButtonWrapper style={styles.secondaryButton} onPress={goToTheHotArea}>
         <MaterialCommunityIcons name="target" size={32} color={MAIN_COLOR} />
