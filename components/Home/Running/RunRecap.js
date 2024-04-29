@@ -1,7 +1,7 @@
 import { View, Text, Button, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { formatTime } from "../../Utils";
+import { formatTime } from "../../Utils/Utils";
 import StartMarker from "../Map/startMarker";
 import EndMarker from "../Map/endMarker";
 import { AntDesign } from "@expo/vector-icons";

@@ -6,7 +6,6 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Button,
   Modal,
   Pressable,
   Animated,
@@ -32,6 +31,7 @@ import * as Location from "expo-location";
 import UserMarker from "../components/Home/Map/userMarker";
 import RunStats from "../components/Home/Running/RunStats";
 import RunRecap from "../components/Home/Running/RunRecap";
+import ButtonWrapper from "../components/Utils/ButtonWrapper";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
 // maps components
@@ -75,23 +75,6 @@ const Screen = ({ navigation }) => {
   const mapRef = useRef(null);
   const [mapReady, setMapReady] = useState(false);
 
-  const [buttonAnimation] = useState(new Animated.Value(1));
-  const handlePressIn = () => {
-    Animated.spring(buttonAnimation, {
-      toValue: 0.9,
-      useNativeDriver: true,
-      speed: 40, // Increase speed for a more rapid animation
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(buttonAnimation, {
-      toValue: 1, // Return to original size
-      useNativeDriver: true,
-      speed: 40, // Match the speed of the press-in animation
-    }).start();
-  };
-
   const onMapLayout = () => {
     setMapReady(true);
   };
@@ -114,14 +97,14 @@ const Screen = ({ navigation }) => {
     setAverageSpeed(avgSpeed); // Store the average speed
     setModalVisible(true); // Show the modal with the map and stats
 
-    const newCoins = user.coins + coinCount
-    setUser({...user, coins: newCoins})
+    const newCoins = user.coins + coinCount;
+    setUser({ ...user, coins: newCoins });
   };
 
   const onDismissModal = () => {
     setModalVisible(!modalVisible);
     setMapReady(false); // reset mapReady state
-  }
+  };
 
   // ==================================== HOT ZONES =====================================
 
@@ -307,20 +290,11 @@ const Screen = ({ navigation }) => {
         {user && user.email && <Text>Email: {user.email}</Text>}
       </View> */}
       <View style={styles.buttonContainer}>
-        <AnimatedTouchable
-          style={[
-            styles.button,
-            {
-              transform: [{ scale: buttonAnimation }],
-            },
-          ]}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          onPress={isTracking ? handleStopTracking : toggleTracking}
-        >
-          <Icon name="navigation" size={30} color="white" />
-          <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
-        </AnimatedTouchable>
+
+        <ButtonWrapper style={styles.button} onPress={isTracking ? handleStopTracking : toggleTracking}>
+            <Icon name="navigation" size={30} color="white" />
+            <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
+        </ButtonWrapper>
 
         <Pressable style={styles.secondaryButton} onPress={goToTheHotArea}>
           <Text style={styles.secondaryButtonText}>

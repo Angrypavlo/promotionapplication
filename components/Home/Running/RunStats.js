@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 
-import { formatTime } from "../../Utils";
+import { formatTime } from "../../Utils/Utils";
 
 const MAIN_COLOR = "#22c55e";
 
