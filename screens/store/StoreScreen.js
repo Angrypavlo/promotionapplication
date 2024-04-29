@@ -14,7 +14,7 @@ const StoreScreen = () => {
         <StateProvider>
             <AuthProvider>
                 <StoreStack.Navigator>
-                    <StoreStack.Screen name="Store" component={MainStoreScreen}/>
+                    <StoreStack.Screen name="StoreHome" component={MainStoreScreen} options={{ title: 'Store' }}/>
                     <StoreStack.Screen name="My Items" component={MyItemsScreen} />
                 </StoreStack.Navigator>
             </AuthProvider>

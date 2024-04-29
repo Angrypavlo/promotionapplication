@@ -31,6 +31,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { useLocationTracker } from "../components/StatsTracking/useLocationTracker";
 import * as Location from "expo-location";
 import UserMarker from "../components/Home/Map/userMarker";
+import RunStats from "../components/Home/Stats/RunStats";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
 // maps components
@@ -188,15 +189,15 @@ const Screen = ({ navigation }) => {
     {
       name: "pippo1",
       coordinate: new AnimatedRegion({
-        latitude: 54.897,
-        longitude: 23.925,
+        latitude: 37.3367,
+        longitude: -122.0311,
       }),
     },
     {
       name: "pippo2",
       coordinate: new AnimatedRegion({
-        latitude: 54.901,
-        longitude: 23.921,
+        latitude: 37.3303,
+        longitude: -122.0345,
       }),
     },
   ]);
@@ -205,15 +206,22 @@ const Screen = ({ navigation }) => {
     {
       name: "pippo1",
       coordinate: {
-        latitude: 54.896,
-        longitude: 23.925,
+        latitude: 37.336,
+        longitude: -122.0311,
+      },
+    },
+    {
+      name: "pippo2",
+      coordinate: {
+        latitude: 37.3303,
+        longitude: -122.033,
       },
     },
     {
       name: "pippo3",
       coordinate: {
-        latitude: 54.901,
-        longitude: 23.924,
+        latitude: 37.329,
+        longitude: -122.0343,
       },
     },
   ];
@@ -222,23 +230,20 @@ const Screen = ({ navigation }) => {
     updatedUsers.map(({ name, coordinate }) => {
       const updUser = users.find((user) => user.name == name);
       if (updUser) {
-        if(Platform.OS == 'ios'){
-          updUser.coordinate
-            .timing({...coordinate, duration: 10})
-            .start();
+        if (Platform.OS == "ios") {
+          updUser.coordinate.timing({ ...coordinate, duration: 10 }).start();
+        } else if (Platform.OS == "android") {
+          if (Platform.OS == "ios")
+            updUser.coordinate.timing({ ...coordinate, duration: 500 }).start();
         }
-        else if(Platform.OS == 'android') {
-          if(Platform.OS == 'ios')
-          updUser.coordinate
-            .timing({...coordinate, duration: 500})
-            .start();
-        }
-      }
-      else {
-        setUsers(prevUsers => [...prevUsers,{
-          name: name,
-          coordinate: new AnimatedRegion(coordinate),
-        }])
+      } else {
+        setUsers((prevUsers) => [
+          ...prevUsers,
+          {
+            name: name,
+            coordinate: new AnimatedRegion(coordinate),
+          },
+        ]);
       }
     });
   };
@@ -262,11 +267,9 @@ const Screen = ({ navigation }) => {
           )}
 
           {users.length > 0 &&
-            users.map(({ name, coordinate }) => {
+            users.map(({ name, coordinate }, index) => {
               return (
-                <Marker.Animated
-                  coordinate={coordinate}
-                >
+                <Marker.Animated key={index} coordinate={coordinate}>
                   <UserMarker name={name} />
                 </Marker.Animated>
               );
@@ -314,19 +317,9 @@ const Screen = ({ navigation }) => {
         </MapView>
       )}
 
-      {isTracking && (
-        <View style={styles.infoContainer}>
-          <Text style={[styles.infoValue, styles.infoMainValue]}>
-            {formatTime(timer)}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={styles.infoValue}>{totalDistance.toFixed(2)} km</Text>
-            <Text style={styles.infoValue}>
-              {speed ? (speed * 3.6).toFixed(2) : "0.00"} km/h
-            </Text>
-            <Text style={styles.infoValue}>{coinCount} coins</Text>
-          </View>
-        </View>
+      {// isTracking && 
+      (
+        <RunStats timer={timer} totalDistance={totalDistance} speed={speed} coinCount={coinCount} />
       )}
       {/* <View style={styles.textContainer}>
         <Text>Home Screen</Text>
@@ -483,30 +476,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     color: MAIN_COLOR,
-  },
-  infoContainer: {
-    position: "absolute",
-    top: 20,
-    backgroundColor: "white",
-    alignItems: "center",
-    padding: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  infoValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    padding: 5,
-    marginHorizontal: 5,
-  },
-  infoMainValue: {
-    color: MAIN_COLOR,
-    fontSize: 30,
   },
 });
 
