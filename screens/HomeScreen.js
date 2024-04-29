@@ -234,7 +234,7 @@ const Screen = ({ navigation }) => {
           region={region}
           customMapStyle={testStyle}
         >
-          {path.length > 0 && (
+          {path.length > 0 && isTracking && (
             <Polyline
               coordinates={path}
               strokeColor="#009933"
