@@ -344,41 +344,6 @@ const Screen = ({ navigation }) => {
           setModalVisible(!modalVisible);
         }}
       >
-        {/* <MapView
-          ref={mapRef}
-          provider={PROVIDER_GOOGLE}
-          style={styles.mapModal}
-          initialRegion={getRegionForPath(path)}
-          onLayout={onMapLayout}
-          customMapStyle={testStyle}
-        >
-          {mapReady && (
-            <Polyline
-              coordinates={path}
-              strokeColor="#009933"
-              strokeWidth={3}
-            />
-          )}
-        </MapView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text style={styles.modalText}>Time: {formatTime(elapsedTime)}</Text>
-          <Text style={styles.modalText}>
-            Distance: {totalDistance.toFixed(2)} km
-          </Text>
-          <Text style={styles.modalText}>
-            Average Speed: {averageSpeed.toFixed(2)} km/h
-          </Text>
-          <Text style={styles.modalText}>Coins Collected: {coinCount}</Text>
-          <Button
-            title="Close"
-            onPress={() => {
-              setModalVisible(!modalVisible);
-              setMapReady(false); // reset mapReady state
-            }}
-          />
-        </View> */}
         <RunRecap
           mapRef={mapRef}
           provGoogle={PROVIDER_GOOGLE}

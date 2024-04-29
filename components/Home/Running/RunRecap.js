@@ -1,9 +1,10 @@
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { formatTime } from "../../Utils";
 import StartMarker from "../Map/startMarker";
 import EndMarker from "../Map/endMarker";
+import { AntDesign } from "@expo/vector-icons";
 
 const calculateBounds = (path) => {
   let minLat = Infinity;
@@ -63,7 +64,7 @@ const RunRecap = ({
         {mapReady && (
           <View>
             <Marker coordinate={path[0]}>
-                <StartMarker />
+              <StartMarker />
             </Marker>
             <Polyline
               coordinates={path}
@@ -71,22 +72,42 @@ const RunRecap = ({
               strokeWidth={3}
             />
             <Marker coordinate={path[path.length - 1]}>
-                <EndMarker />
+              <EndMarker />
             </Marker>
           </View>
         )}
       </MapView>
       <View style={styles.modalView}>
-        <Text style={styles.modalText}>Time: {formatTime(elapsedTime)}</Text>
-        <Text style={styles.modalText}>
-          Distance: {totalDistance.toFixed(2)} km
-        </Text>
-        <Text style={styles.modalText}>
-          Average Speed: {averageSpeed.toFixed(2)} km/h
-        </Text>
-        <Text style={styles.modalText}>Coins Collected: {coinCount}</Text>
-        <Button title="Close" onPress={onDismiss} />
+        <View style={styles.modalRow}>
+          <View style={styles.modalCol}>
+            <View style={styles.valueContainer}>
+              <Text style={styles.label}>Time:</Text>
+              <Text style={styles.value}>{formatTime(elapsedTime)}</Text>
+            </View>
+
+            <View style={styles.valueContainer}>
+              <Text style={styles.label}>Distance:</Text>
+              <Text style={styles.value}> {totalDistance.toFixed(2)} km</Text>
+            </View>
+          </View>
+
+          <View style={styles.modalCol}>
+            <View style={styles.valueContainer}>
+              <Text style={styles.label}>Average Speed:</Text>
+              <Text style={styles.value}>{averageSpeed.toFixed(2)} km/h</Text>
+            </View>
+
+            <View style={styles.valueContainer}>
+              <Text style={styles.label}>Collected:</Text>
+              <Text style={styles.value}>{coinCount} coins</Text>
+            </View>
+          </View>
+        </View>
+        <View style={{ height: 80}} />
       </View>
+      <Pressable style={styles.closeBut} onPress={onDismiss}>
+        <AntDesign name="close" size={32} color="black" />
+      </Pressable>
     </View>
   );
 };
@@ -94,14 +115,40 @@ const RunRecap = ({
 const styles = StyleSheet.create({
   mapModal: {
     width: "100%",
-    height: "75%",
+    height: "100%",
   },
   modalView: {
-    justifyContent: "center",
     alignItems: "center",
+    position: "absolute",
+    bottom: 0,
+    left: "5%",
+    backgroundColor: "white",
+    width: "90%",
+    borderRadius: 10,
+    padding: 10,
   },
-  modalText: {
+  modalRow: {
+    flexDirection: "row",
+  },
+  modalCol: {
+    flex: 1,
+    padding: 10,
+  },
+  valueContainer: {
     marginVertical: 10,
+  },
+  value: {
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  label: {},
+  closeBut: {
+    position: "absolute",
+    top: 80,
+    right: 30,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 30,
   },
 });
 
