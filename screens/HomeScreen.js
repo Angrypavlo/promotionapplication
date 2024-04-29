@@ -151,7 +151,7 @@ const Screen = ({ navigation }) => {
       name: "pippo1",
       coordinate: new AnimatedRegion({
         latitude: 37.3367,
-        longitude: -122.0311,
+        longitude: -122.0325,
       }),
     },
     {
@@ -163,31 +163,48 @@ const Screen = ({ navigation }) => {
     },
   ]);
 
-  const updatedUsers = [
-    {
-      name: "pippo1",
-      coordinate: {
-        latitude: 37.336,
-        longitude: -122.0311,
-      },
-    },
-    {
-      name: "pippo2",
-      coordinate: {
-        latitude: 37.3303,
-        longitude: -122.033,
-      },
-    },
-    {
-      name: "pippo3",
-      coordinate: {
-        latitude: 37.329,
-        longitude: -122.0343,
-      },
-    },
-  ];
+  // const updatedUsers = [
+  //   {
+  //     name: "pippo1",
+  //     coordinate: {
+  //       latitude: 37.336,
+  //       longitude: -122.0311,
+  //     },
+  //   },
+  //   {
+  //     name: "pippo2",
+  //     coordinate: {
+  //       latitude: 37.3303,
+  //       longitude: -122.033,
+  //     },
+  //   },
+  //   {
+  //     name: "pippo3",
+  //     coordinate: {
+  //       latitude: 37.329,
+  //       longitude: -122.0343,
+  //     },
+  //   },
+  // ];
 
   const updateOtherUsers = () => {
+    const updatedUsers = [
+      {
+        name: "pippo1",
+        coordinate: {
+          latitude: users.find(u => u.name === "pippo1").coordinate.latitude._value - 0.0005,
+          longitude: users.find(u => u.name === "pippo1").coordinate.longitude._value,
+        },
+      },
+      {
+        name: "pippo2",
+        coordinate: {
+          latitude: users.find(u => u.name === "pippo2").coordinate.latitude._value,
+          longitude: users.find(u => u.name === "pippo2").coordinate.longitude._value + 0.0005,
+        },
+      },
+    ];
+
     updatedUsers.map(({ name, coordinate }) => {
       const updUser = users.find((user) => user.name == name);
       if (updUser) {
