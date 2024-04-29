@@ -116,11 +116,10 @@ const RunRecap = ({
 const styles = StyleSheet.create({
   mapModal: {
     width: "100%",
-    height: "100%",
+    height: "72%",
   },
   modalView: {
     alignItems: "center",
-    position: "absolute",
     bottom: 0,
     left: "5%",
     backgroundColor: "white",

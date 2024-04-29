@@ -15,6 +15,7 @@ import { getScreenOptions } from "../components/ScreenOptions";
 import { useAuth } from "../components/AuthContext";
 import OAuthScreen from "./LoginScreen";
 import Icon from "react-native-vector-icons/Feather";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // map imports
 import MapView, {
@@ -32,6 +33,7 @@ import UserMarker from "../components/Home/Map/userMarker";
 import RunStats from "../components/Home/Running/RunStats";
 import RunRecap from "../components/Home/Running/RunRecap";
 import ButtonWrapper from "../components/Utils/ButtonWrapper";
+import StartMarker from "../components/Home/Map/startMarker";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
 // maps components
@@ -218,11 +220,16 @@ const Screen = ({ navigation }) => {
           customMapStyle={testStyle}
         >
           {path.length > 0 && isTracking && (
-            <Polyline
-              coordinates={path}
-              strokeColor="#009933"
-              strokeWidth={3}
-            />
+            <View>
+              <Marker coordinate={path[0]}>
+                <StartMarker />
+              </Marker>
+              <Polyline
+                coordinates={path}
+                strokeColor="#009933"
+                strokeWidth={3}
+              />
+            </View>
           )}
 
           {users.length > 0 &&
@@ -284,24 +291,24 @@ const Screen = ({ navigation }) => {
           coinCount={coinCount}
         />
       )}
+
       {/* <View style={styles.textContainer}>
         <Text>Home Screen</Text>
         <Text>Logged in: {user ? "Yes" : "No"}</Text>
         {user && user.email && <Text>Email: {user.email}</Text>}
       </View> */}
-      <View style={styles.buttonContainer}>
-
-        <ButtonWrapper style={styles.button} onPress={isTracking ? handleStopTracking : toggleTracking}>
-            <Icon name="navigation" size={30} color="white" />
-            <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
+        <ButtonWrapper
+          style={styles.button}
+          onPress={isTracking ? handleStopTracking : toggleTracking}
+        >
+          <Icon name="navigation" size={30} color="white" />
+          <Text style={styles.buttonText}>{isTracking ? "STOP" : "START"}</Text>
         </ButtonWrapper>
 
-        <ButtonWrapper style={styles.secondaryButton} onPress={goToTheHotArea}>
-          <Text style={styles.secondaryButtonText}>
-            {focusedX ? "Stop navigation" : "Go to the Hot Area"}
-          </Text>
-        </ButtonWrapper>
-      </View>
+      <ButtonWrapper style={styles.secondaryButton} onPress={goToTheHotArea}>
+        <MaterialCommunityIcons name="target" size={32} color={MAIN_COLOR} />
+      </ButtonWrapper>
+
       <Pressable
         style={{
           position: "absolute",
@@ -309,7 +316,6 @@ const Screen = ({ navigation }) => {
           right: 20,
           width: 50,
           height: 50,
-          backgroundColor: "white",
         }}
         onPress={() => updateOtherUsers()}
       ></Pressable>
@@ -354,11 +360,6 @@ const styles = StyleSheet.create({
     bottom: 200,
     alignItems: "center",
   },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 40,
-    alignItems: "center",
-  },
   button: {
     backgroundColor: MAIN_COLOR,
     paddingHorizontal: 30,
@@ -375,26 +376,24 @@ const styles = StyleSheet.create({
     elevation: 3,
     width: 160,
     height: 70,
-    marginBottom: 20,
+    position: "absolute",
+    bottom: 60,
   },
   secondaryButton: {
+    bottom: 30,
+    left: 30,
+    position: 'absolute',
     backgroundColor: "white",
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 25,
-    paddingVertical: 15,
+    padding: 15,
   },
   buttonText: {
     marginLeft: 10,
     fontWeight: "bold",
     fontSize: 18,
     color: "white",
-  },
-  secondaryButtonText: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: MAIN_COLOR,
   },
 });
 
