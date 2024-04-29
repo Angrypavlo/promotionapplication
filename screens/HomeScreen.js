@@ -56,7 +56,7 @@ const calculateAverageSpeed = (totalDistance, elapsedTime) => {
 };
 
 const Screen = ({ navigation }) => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const {
     region,
     path,
@@ -113,6 +113,9 @@ const Screen = ({ navigation }) => {
     const avgSpeed = calculateAverageSpeed(totalDistance, currentTime);
     setAverageSpeed(avgSpeed); // Store the average speed
     setModalVisible(true); // Show the modal with the map and stats
+
+    const newCoins = user.coins + coinCount
+    setUser({...user, coins: newCoins})
   };
 
   const onDismissModal = () => {

@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import * as Location from 'expo-location';
-import { useAuth } from '../AuthContext';
-import haversine from 'haversine';
+import { useState, useEffect, useRef } from "react";
+import * as Location from "expo-location";
+import { useAuth } from "../AuthContext";
+import haversine from "haversine";
 
 export const useLocationTracker = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -20,9 +20,14 @@ export const useLocationTracker = () => {
   useEffect(() => {
     const startWatching = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.error('Permission to access location was denied');
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
         return;
+      }
+
+      if(isTracking){
+        setTotalDistance(0);
+        setTotalTimeRan(0);
       }
 
       locationSubscription.current = await Location.watchPositionAsync(
@@ -32,7 +37,11 @@ export const useLocationTracker = () => {
           distanceInterval: 1,
         },
         (locationUpdate) => {
-          const { latitude, longitude, speed: updatedSpeed } = locationUpdate.coords;
+          const {
+            latitude,
+            longitude,
+            speed: updatedSpeed,
+          } = locationUpdate.coords;
           setRegion({
             latitude,
             longitude,
@@ -45,8 +54,11 @@ export const useLocationTracker = () => {
               const newPoint = { latitude, longitude };
               if (currentPath.length > 0) {
                 const lastPoint = currentPath[currentPath.length - 1];
-                const incrementalDistance = haversine(lastPoint, newPoint, { unit: 'meter' }) / 1000; // Convert to kilometers
-                setTotalDistance((prevDistance) => prevDistance + incrementalDistance);
+                const incrementalDistance =
+                  haversine(lastPoint, newPoint, { unit: "meter" }) / 1000; // Convert to kilometers
+                setTotalDistance(
+                  (prevDistance) => prevDistance + incrementalDistance
+                );
               }
               return [...currentPath, newPoint];
             });
@@ -117,5 +129,16 @@ export const useLocationTracker = () => {
     };
   }, []);
 
-  return { isTracking, setIsTracking, region, path, speed, timer, totalDistance, toggleTracking, coinCount, totalTimeRan };
+  return {
+    isTracking,
+    setIsTracking,
+    region,
+    path,
+    speed,
+    timer,
+    totalDistance,
+    toggleTracking,
+    coinCount,
+    totalTimeRan,
+  };
 };
