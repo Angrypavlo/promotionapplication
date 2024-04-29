@@ -16,7 +16,6 @@ import { getScreenOptions } from "../components/ScreenOptions";
 import { useAuth } from "../components/AuthContext";
 import OAuthScreen from "./LoginScreen";
 import Icon from "react-native-vector-icons/Feather";
-import { formatTime } from "../components/Utils";
 
 // map imports
 import MapView, {
@@ -31,7 +30,8 @@ import MapViewDirections from "react-native-maps-directions";
 import { useLocationTracker } from "../components/StatsTracking/useLocationTracker";
 import * as Location from "expo-location";
 import UserMarker from "../components/Home/Map/userMarker";
-import RunStats from "../components/Home/Stats/RunStats";
+import RunStats from "../components/Home/Running/RunStats";
+import RunRecap from "../components/Home/Running/RunRecap";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
 // maps components
@@ -41,38 +41,6 @@ const MAIN_COLOR = "#22c55e";
 
 const HomeStack = createStackNavigator();
 const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
-
-const calculateBounds = (path) => {
-  let minLat = Infinity;
-  let maxLat = -Infinity;
-  let minLng = Infinity;
-  let maxLng = -Infinity;
-
-  path.forEach((point) => {
-    minLat = Math.min(minLat, point.latitude);
-    maxLat = Math.max(maxLat, point.latitude);
-    minLng = Math.min(minLng, point.longitude);
-    maxLng = Math.max(maxLng, point.longitude);
-  });
-
-  return { minLat, maxLat, minLng, maxLng };
-};
-
-const getRegionForPath = (path) => {
-  const { minLat, maxLat, minLng, maxLng } = calculateBounds(path);
-
-  const latDelta = maxLat - minLat;
-  const lngDelta = maxLng - minLng;
-
-  // Add some padding to the deltas
-  const padding = 0.05;
-  return {
-    latitude: minLat + latDelta / 2,
-    longitude: minLng + lngDelta / 2,
-    latitudeDelta: latDelta + padding,
-    longitudeDelta: lngDelta + padding,
-  };
-};
 
 const calculateAverageSpeed = (totalDistance, elapsedTime) => {
   console.log(totalDistance, elapsedTime);
@@ -146,6 +114,11 @@ const Screen = ({ navigation }) => {
     setAverageSpeed(avgSpeed); // Store the average speed
     setModalVisible(true); // Show the modal with the map and stats
   };
+
+  const onDismissModal = () => {
+    setModalVisible(!modalVisible);
+    setMapReady(false); // reset mapReady state
+  }
 
   // ==================================== HOT ZONES =====================================
 
@@ -317,9 +290,13 @@ const Screen = ({ navigation }) => {
         </MapView>
       )}
 
-      {// isTracking && 
-      (
-        <RunStats timer={timer} totalDistance={totalDistance} speed={speed} coinCount={coinCount} />
+      {isTracking && (
+        <RunStats
+          timer={timer}
+          totalDistance={totalDistance}
+          speed={speed}
+          coinCount={coinCount}
+        />
       )}
       {/* <View style={styles.textContainer}>
         <Text>Home Screen</Text>
@@ -367,7 +344,7 @@ const Screen = ({ navigation }) => {
           setModalVisible(!modalVisible);
         }}
       >
-        <MapView
+        {/* <MapView
           ref={mapRef}
           provider={PROVIDER_GOOGLE}
           style={styles.mapModal}
@@ -401,7 +378,20 @@ const Screen = ({ navigation }) => {
               setMapReady(false); // reset mapReady state
             }}
           />
-        </View>
+        </View> */}
+        <RunRecap
+          mapRef={mapRef}
+          provGoogle={PROVIDER_GOOGLE}
+          path={path}
+          onMapLayout={onMapLayout}
+          mapReady={mapReady}
+          testStyle={testStyle}
+          elapsedTime={elapsedTime}
+          totalDistance={totalDistance}
+          averageSpeed={averageSpeed}
+          coinCount={coinCount}
+          onDismiss={onDismissModal}
+        />
       </Modal>
     </View>
   );
@@ -417,10 +407,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
-  mapModal: {
-    width: "100%",
-    height: "75%",
-  },
   textContainer: {
     position: "absolute",
     bottom: 200,
@@ -430,15 +416,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 40,
     alignItems: "center",
-  },
-  modalView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalText: {
-    marginVertical: 10, // This ensures there is some space between the text and other elements
   },
   button: {
     backgroundColor: MAIN_COLOR,

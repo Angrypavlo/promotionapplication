@@ -11,20 +11,20 @@ const RunStats = ({ timer, totalDistance, speed, coinCount }) => {
       <Text style={[styles.infoValue, styles.infoMainValue]}>
         {formatTime(timer)}
       </Text>
-      <View style={{ flexDirection: "row" }}>
-        <View style={styles.infoSubContainer}>
+      <View style={styles.infoSubContainer}>
+        <View style={styles.infoValueContainer}>
           <Text>distance:</Text>
           <Text style={styles.infoValue}>{totalDistance.toFixed(2)} km</Text>
         </View>
-        <View style={styles.infoSubContainer}>
+        <View style={styles.infoValueContainer}>
           <Text>speed:</Text>
           <Text style={styles.infoValue}>
             {speed ? (speed * 3.6).toFixed(2) : "0.00"} km/h
           </Text>
         </View>
-        <View style={styles.infoSubContainer}>
-        <Text>coins:</Text>
-        <Text style={styles.infoValue}>{coinCount} coins</Text>
+        <View style={styles.infoValueContainer}>
+          <Text>coins:</Text>
+          <Text style={styles.infoValue}>{coinCount} coins</Text>
         </View>
       </View>
     </View>
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     padding: 10,
-    paddingHorizontal: 20,
     borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -49,15 +48,22 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 18,
     fontWeight: "bold",
-    padding: 5,
     marginHorizontal: 5,
   },
   infoMainValue: {
     color: MAIN_COLOR,
-    fontSize: 30,
+    fontSize: 52,
   },
   infoSubContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  infoValueContainer: {
     alignItems: "center",
+    backgroundColor: '#efefef',
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
   },
 });
 
