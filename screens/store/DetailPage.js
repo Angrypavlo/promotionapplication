@@ -1,14 +1,48 @@
-import { View, Text, StyleSheet } from "react-native";
-import React from "react";
-
-import { Entypo } from '@expo/vector-icons';
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import ShopMarker from "../../components/store/shopMarker";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import * as Location from 'expo-location';
+import ShopMarker from '../../components/store/shopMarker';
 
 const DetailPage = ({ route }) => {
+  const [region, setRegion] = useState(null);
   const item = route.params.item;
+  
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Permission to access location was denied');
+        return;
+      }
 
-  console.log(item)
+      let userLocation = await Location.getCurrentPositionAsync({});
+      const userCoordinate = {
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
+      };
+
+      // Calculate the midpoint
+      const midLatitude = (item.coordinate.latitude + userCoordinate.latitude) / 2;
+      const midLongitude = (item.coordinate.longitude + userCoordinate.longitude) / 2;
+
+      // Calculate deltas
+      const latitudeDelta = Math.abs(item.coordinate.latitude - userCoordinate.latitude) * 2.2; // Increased by factor for padding
+      const longitudeDelta = Math.abs(item.coordinate.longitude - userCoordinate.longitude) * 2.2; // Increased by factor for padding
+
+      // Set region
+      setRegion({
+        latitude: midLatitude,
+        longitude: midLongitude,
+        latitudeDelta,
+        longitudeDelta,
+      });
+    })();
+  }, []);
+
+  if (!region) {
+    return <View><Text>Loading...</Text></View>;
+  }
 
   return (
     <View style={styles.container}>
@@ -16,33 +50,50 @@ const DetailPage = ({ route }) => {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         customMapStyle={testStyle}
-        initialRegion={{
-            ...item.coordinate,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-        }}
+        showsUserLocation={true}
+        region={region}
       >
+        
         <Marker coordinate={item.coordinate}>
-            <ShopMarker />
+          <ShopMarker />
         </Marker>
+
       </MapView>
-      <Text>{item.title}</Text>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text>{item.description}</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   map: {
-    width: "100%",
-    height: 200,
+    width: '100%',
+    height: '100%',
+  },
+  detailsContainer: {
+    position: 'absolute',
+    top: 10,
+    margin: 20,
+    padding: 25,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 });
 
 export default DetailPage;
+
 
 const testStyle = [
     {

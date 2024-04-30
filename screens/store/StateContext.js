@@ -18,8 +18,8 @@ export const StateProvider = ({ children }) => {
           points: 50,
           image: 'https://www.maxima.lt/upl/media/762x/04/4034-maxima_ivairus-02.jpg?v=1-0',
           coordinate: {
-            latitude: 37.3365,
-            longitude: -122.0323,
+            latitude: 37.341,
+            longitude: -122.038,
           }
       },
       {
@@ -28,6 +28,10 @@ export const StateProvider = ({ children }) => {
           description: 'Caffeine is the best place to have a brake during your run',
           points: 30,
           image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBbj5UdbPZHDV0d6-e3IcPSCgIOWX2jTAVHQy8RTja0Q&s',
+          coordinate: {
+            latitude: 37.321,
+            longitude: -122.012,
+          }
       },
       {
           id: '3',
@@ -35,6 +39,10 @@ export const StateProvider = ({ children }) => {
           description: 'After your run come for karaoke',
           points: 70,
           image: 'https://visit.kaunas.lt/assets/Uploads/_resampled/FillWyIxMDUwIiwiNTI1Il0/dzem-706118336.jpg',
+          coordinate: {
+            latitude: 37.301,
+            longitude: -122.008,
+          }
       }
   ])
 

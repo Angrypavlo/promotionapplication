@@ -150,7 +150,7 @@ const Screen = ({ navigation }) => {
     {
       name: "user1",
       coordinate: new AnimatedRegion({
-        latitude: 37.3367,
+        latitude: 37.334,
         longitude: -122.0325,
       }),
     },
@@ -158,7 +158,7 @@ const Screen = ({ navigation }) => {
       name: "user2",
       coordinate: new AnimatedRegion({
         latitude: 37.3303,
-        longitude: -122.0345,
+        longitude: -122.0335,
       }),
     },
   ]);
