@@ -17,6 +17,10 @@ export const StateProvider = ({ children }) => {
           description: 'Come to maxima for grocery shopping after your run',
           points: 50,
           image: 'https://www.maxima.lt/upl/media/762x/04/4034-maxima_ivairus-02.jpg?v=1-0',
+          coordinate: {
+            latitude: 37.3365,
+            longitude: -122.0323,
+          }
       },
       {
           id: '2',

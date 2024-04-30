@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import ButtonWrapper from '../Utils/ButtonWrapper';
 
 // Card to display for every item in the store page
-const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) => {
+const CardStore = ({ onPress, title, description, points, image, onBuy, hidePurchase }) => {
 
     // title: title of the item to buy
     // description: description of the item to buy
@@ -15,7 +15,7 @@ const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) =
     // hidePurchase: flag used to hide the purchase button in owned items
 
   return (
-    <View style={styles.cardContainer}>
+    <Pressable style={styles.cardContainer} onPress={onPress}>
         <Image 
             style={styles.cardImage} 
             source={{uri: image}}
@@ -38,7 +38,7 @@ const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) =
             </ButtonWrapper>}
         </View>
 
-    </View>
+    </Pressable>
   )
 }
 

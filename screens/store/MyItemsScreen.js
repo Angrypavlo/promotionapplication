@@ -18,6 +18,7 @@ const MyItemsScreen = ({ navigation }) => {
             data={ownedItems}
             renderItem={({item}) => (
                 <CardStore 
+                    onPress={() => navigation.navigate("Details", {item: item})}
                     title={item.title} 
                     description={item.description} 
                     points={item.points}
