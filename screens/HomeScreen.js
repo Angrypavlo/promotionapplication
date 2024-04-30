@@ -233,7 +233,7 @@ const Screen = ({ navigation }) => {
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           showsUserLocation={true}
-          region={region}
+          initialRegion={region}
           customMapStyle={testStyle}
         >
           {path.length > 0 && isTracking && (

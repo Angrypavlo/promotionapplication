@@ -25,7 +25,7 @@ export const StateProvider = ({ children }) => {
       {
           id: '2',
           title: 'Caffeine 5%',
-          description: 'Caffeine is the best place to have a brake during your run',
+          description: 'Caffeine is the best place to have a break during your run',
           points: 30,
           image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBbj5UdbPZHDV0d6-e3IcPSCgIOWX2jTAVHQy8RTja0Q&s',
           coordinate: {
