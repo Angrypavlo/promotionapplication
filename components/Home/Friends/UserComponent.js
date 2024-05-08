@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import React from "react";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -10,6 +10,10 @@ const UserComponent = ({ name, email, profilePicture, status }) => {
   const profilePicUrl =
     profilePicture || "https://avatar.iran.liara.run/public/boy?username=Ash";
 
+    const friendRequest = () => {
+        Alert.alert("Friend request sent to " + name)
+    }
+
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
@@ -19,17 +23,21 @@ const UserComponent = ({ name, email, profilePicture, status }) => {
           <Text>{email}</Text>
         </View>
       </View>
-      <ButtonWrapper
-        style={[
-          styles.icon,
-          status == 1 && styles.waitingIcon,
-          status == 2 && styles.acceptedIcon,
-        ]}
-      >
-        {status == 0 && <AntDesign name="adduser" size={24} color="black" />}
-        {status == 1 && <AntDesign name="clockcircle" size={24} color="white" />}
-        {status == 2 && <AntDesign name="checkcircleo" size={24} color="white" />}
-      </ButtonWrapper>
+      {status == 0 && (
+        <ButtonWrapper style={styles.icon} onPress={friendRequest}>
+          <AntDesign name="adduser" size={24} color="black" />
+        </ButtonWrapper>
+      )}
+      {status == 1 && (
+        <ButtonWrapper style={[styles.icon, styles.waitingIcon]}>
+          <AntDesign name="clockcircle" size={24} color="white" />
+        </ButtonWrapper>
+      )}
+      {status == 2 && (
+        <ButtonWrapper style={[styles.icon, styles.acceptedIcon]}>
+          <AntDesign name="checkcircleo" size={24} color="white" />
+        </ButtonWrapper>
+      )}
     </View>
   );
 };
