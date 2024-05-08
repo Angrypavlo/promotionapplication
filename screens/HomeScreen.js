@@ -34,6 +34,7 @@ import RunStats from "../components/Home/Running/RunStats";
 import RunRecap from "../components/Home/Running/RunRecap";
 import ButtonWrapper from "../components/Utils/ButtonWrapper";
 import StartMarker from "../components/Home/Map/startMarker";
+import FriendsScreen from "./friends/FriendsScreen";
 // import { GOOGLE_MAPS_APIKEY } from '@env';
 
 // maps components
@@ -424,6 +425,7 @@ function HomeScreen() {
         component={Screen}
         options={{ title: "Home" }}
       />
+      <HomeStack.Screen name="Friends" component={FriendsScreen} options={{ headerLeft: () => null }}/>
       <HomeStack.Screen name="OAuthWebView" component={OAuthScreen} />
     </HomeStack.Navigator>
   );

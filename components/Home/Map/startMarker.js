@@ -6,7 +6,7 @@ import Triangle from "react-native-triangle";
 
 const MAIN_COLOR = "#22c55e";
 
-const StartMarker = ({ start }) => {
+const StartMarker = () => {
   return (
     <View style={{ alignItems: "center" }}>
       <View
