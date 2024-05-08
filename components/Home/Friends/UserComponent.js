@@ -46,7 +46,7 @@ export default UserComponent;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    marginVertical: 10,
     padding: 12,
     borderRadius: 10,
     backgroundColor: "#E4E4E4",
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flexDirection: "row",
+    alignItems: 'center',
   },
   textContainer: {
     marginLeft: 10,
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   headline: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 3,
   },
