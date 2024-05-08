@@ -1,45 +1,60 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
-import React from 'react'
-
+import React, { useRef } from 'react';
+import { View, Text, Image, StyleSheet, Pressable, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import ButtonWrapper from '../Utils/ButtonWrapper';
 
-// Card to display for every item in the store page
-const CardStore = ({ title, description, points, image, onBuy, hidePurchase }) => {
+const CardStore = ({ onPress, title, description, points, image, onBuy, hidePurchase }) => {
+    const fadeAnim = useRef(new Animated.Value(1)).current;  // Initial opacity set to 1
 
-    // title: title of the item to buy
-    // description: description of the item to buy
-    // points: number of point to buy the item
-    // image: URL of the image (does not work for local images)
-    // onBuy: method to perform when the purchase button is clicked
-    // hidePurchase: flag used to hide the purchase button in owned items
+    const handlePressIn = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 0.5,  // Fade to 50% opacity
+            duration: 100,  // Duration in milliseconds
+            useNativeDriver: true,  // Use native driver for better performance
+        }).start();
+    };
 
-  return (
-    <View style={styles.cardContainer}>
-        <Image 
-            style={styles.cardImage} 
-            source={{uri: image}}
-            resizeMode='cover'
-        />
-        <View style={{
-            flexDirection: 'row', 
-            justifyContent: 'space-between',
-            alignItems: 'flex-end'
-        }}>
-            <View style={hidePurchase || {width: '65%'}}>
-                <Text style={styles.cardTitle}>{title}</Text>   
-                <Text style={styles.cardDescription}>{description}</Text>
-            </View>
-            {hidePurchase 
-            ||
-            <Pressable style={styles.cardCta} onPress={onBuy}>
-                <Feather name="shopping-cart" size={21} color="white" />
-                <Text style={styles.cardPoints}>{points} pts</Text>
-            </Pressable>}
-        </View>
+    const handlePressOut = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,  // Fade back to 100% opacity
+            duration: 100,  // Duration in milliseconds
+            useNativeDriver: true,
+        }).start();
+    };
 
-    </View>
-  )
-}
+    return (
+        <Pressable
+            style={styles.cardContainer}
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+        >
+            <Animated.View style={{ opacity: fadeAnim }}> 
+                <Image
+                    style={styles.cardImage}
+                    source={{ uri: image }}
+                    resizeMode='cover'
+                />
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end'
+                }}>
+                    <View style={hidePurchase ? undefined : { width: '65%' }}>
+                        <Text style={styles.cardTitle}>{title}</Text>
+                        <Text style={styles.cardDescription}>{description}</Text>
+                    </View>
+                    {hidePurchase ||
+                        <ButtonWrapper style={styles.cardCta} onPress={onBuy}>
+                            <Feather name="shopping-cart" size={21} color="white" />
+                            <Text style={styles.cardPoints}>{points} pts</Text>
+                        </ButtonWrapper>
+                    }
+                </View>
+            </Animated.View>
+        </Pressable>
+    );
+};
 
 const styles = StyleSheet.create({
     cardImage: {
