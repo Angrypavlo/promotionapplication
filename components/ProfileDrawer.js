@@ -16,7 +16,7 @@ const ProfileDrawer = (props) => {
         <TouchableOpacity style={styles.button} onPress={() => {
           props.navigation.navigate('Friends');
         }}>
-          <Text>Profile</Text>
+          <Text>Friends</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => {
           logout();
