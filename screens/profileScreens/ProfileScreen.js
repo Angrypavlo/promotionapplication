@@ -1,17 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 const ProfileScreen = ({ route, navigation }) => {
-    const { name, email, bio, profileImagePhoto} = route.params;
+    const { name, email, bio, profileImagePhoto } = route.params;
 
     const handleEditProfile = () => {
         navigation.navigate('EditProfile'); // Navigate to the EditProfileScreen
+    };
+    const handleStatisticsScreen = () => {
+        navigation.navigate('Statistics'); // Navigate to the EditProfileScreen
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Button title='Edit profile' onPress={handleEditProfile}></Button>
+                <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+                    <Text style={styles.editButtonText}>Edit profile</Text>
+                </TouchableOpacity>
                 <Image
                     style={styles.profileImage}
                     source={profileImagePhoto} // Change this to your profile image path
@@ -26,14 +31,11 @@ const ProfileScreen = ({ route, navigation }) => {
             <View>
                 <TouchableOpacity
                     onPress={() => {
-                        // handle onPress
                     }} style={styles.bioContainer}>
                     <Text style={styles.label}>Friends</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => {
-                        // handle onPress
-                    }} style={styles.bioContainer}>
+                    onPress={handleStatisticsScreen} style={styles.bioContainer}>
                     <Text style={styles.label}>Statistics</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
     },
     bioContainer: {
         padding: 18,
+        borderBottomWidth: 1,
         borderBottomColor: '#ddd'
     },
     label: {
@@ -86,7 +89,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     editButton: {
-        title: 'Edit profile'
+        backgroundColor: '#007bff',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    editButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     }
 });
 

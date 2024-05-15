@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useLocationTracker } from '../components/StatsTracking/useLocationTracker';
 
 import { formatTime } from '../components/Utils';
+import StatisticsScreen from './profileScreens/StatisticsScreen';
 
 const HomeStack = createStackNavigator();
 const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
@@ -287,6 +288,8 @@ function HomeScreen() {
       //   bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       //   profileImagePhoto: require('../screens/images/BlankProfileImage.png')
       // }} 
+      />
+      <HomeStack.Screen name="Statistics" component={StatisticsScreen} 
       />
     </HomeStack.Navigator>
   );
