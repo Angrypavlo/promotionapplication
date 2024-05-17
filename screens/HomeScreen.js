@@ -15,7 +15,7 @@ import { getScreenOptions } from "../components/ScreenOptions";
 import { useAuth } from "../components/AuthContext";
 import OAuthScreen from "./LoginScreen";
 import Icon from "react-native-vector-icons/Feather";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // map imports
 import MapView, {
@@ -111,11 +111,21 @@ const Screen = ({ navigation }) => {
 
   // ==================================== HOT ZONES =====================================
 
+  useEffect(() => {
+    fetch(
+      "https://3000--main--pro-backend--dzmykolas.coder.dzmykolas.place/location"
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setX({ latitude: json.coordinates.x, longitude: json.coordinates.y });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   // coordinates of the hot zone
-  const [x, setX] = useState({
-    latitude: 37.32,
-    longitude: -122.02,
-  });
+  const [x, setX] = useState({});
   const [focusedX, setFocusedX] = useState(false);
 
   // route duration
@@ -193,15 +203,21 @@ const Screen = ({ navigation }) => {
       {
         name: "user1",
         coordinate: {
-          latitude: users.find(u => u.name === "user1").coordinate.latitude._value - 0.0005,
-          longitude: users.find(u => u.name === "user1").coordinate.longitude._value,
+          latitude:
+            users.find((u) => u.name === "user1").coordinate.latitude._value -
+            0.0005,
+          longitude: users.find((u) => u.name === "user1").coordinate.longitude
+            ._value,
         },
       },
       {
         name: "user2",
         coordinate: {
-          latitude: users.find(u => u.name === "user2").coordinate.latitude._value,
-          longitude: users.find(u => u.name === "user2").coordinate.longitude._value + 0.0005,
+          latitude: users.find((u) => u.name === "user2").coordinate.latitude
+            ._value,
+          longitude:
+            users.find((u) => u.name === "user2").coordinate.longitude._value +
+            0.0005,
         },
       },
     ];
@@ -400,7 +416,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     bottom: 30,
     left: 30,
-    position: 'absolute',
+    position: "absolute",
     backgroundColor: "white",
     borderRadius: 30,
     alignItems: "center",
@@ -425,7 +441,11 @@ function HomeScreen() {
         component={Screen}
         options={{ title: "Home" }}
       />
-      <HomeStack.Screen name="Friends" component={FriendsScreen} options={{ headerLeft: () => null }}/>
+      <HomeStack.Screen
+        name="Friends"
+        component={FriendsScreen}
+        options={{ headerLeft: () => null }}
+      />
       <HomeStack.Screen name="OAuthWebView" component={OAuthScreen} />
     </HomeStack.Navigator>
   );
