@@ -10,7 +10,7 @@ export const StateProvider = ({ children }) => {
   const coins = user ? user.coins : 0
 
   // items available (for upgrade they could be fetched from a db)
-  const [items, setItems] = useState([
+  const discounts = [
       {
           id: '1',
           title: 'Maxima 10%',
@@ -44,7 +44,40 @@ export const StateProvider = ({ children }) => {
             longitude: -122.008,
           }
       }
-  ])
+  ]
+
+  const icons = [
+    {
+      id: '10',
+      name: 'Bat Icon',
+      points: 5,
+      image: 'bat',
+    },
+    {
+      id: '11',
+      name: 'Bird Icon',
+      points: 5,
+      image: 'bird',
+    },
+    {
+      id: '12',
+      name: 'Cow Icon',
+      points: 10,
+      image: 'cow',
+    },
+    {
+      id: '13',
+      name: 'Ilama Icon',
+      points: 5,
+      image: 'ilama',
+    },
+    {
+      id: '14',
+      name: 'Panda Icon',
+      points: 10,
+      image: 'panda',
+    },
+  ]
 
   // items bought by the customer
   const [ownedItems, setOwnedItems] = useState([])
@@ -61,7 +94,7 @@ export const StateProvider = ({ children }) => {
           user.coins = coins - numPoints
 
           // add item to the owned list
-          const item = items.find((item) => item.id === id)
+          const item = discounts.find((item) => item.id === id)
           if (item) {
               if(ownedItems.length > 0){
                   setOwnedItems([...ownedItems, item])
@@ -82,7 +115,7 @@ export const StateProvider = ({ children }) => {
   }
 
   return (
-    <StateContext.Provider value={{ coins, items, ownedItems, buyItem }}>
+    <StateContext.Provider value={{ coins, items: discounts, ownedItems, buyItem, icons }}>
       {children}
     </StateContext.Provider>
   );
