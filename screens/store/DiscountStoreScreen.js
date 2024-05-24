@@ -9,7 +9,12 @@ import { useAuth } from '../../components/AuthContext';
 
 const DiscountStoreScreen = ({navigation, route}) => {
 
-    const { coins, items, buyItem } = useStateValue()
+    const { coins, items, buyItem, ownedItems } = useStateValue()
+
+
+  const filteredItems = items.filter((icon) => {
+    return !ownedItems.some((item) => item.id === icon.id);
+  });
 
   return (
     <SafeAreaView>
@@ -31,7 +36,7 @@ const DiscountStoreScreen = ({navigation, route}) => {
                     style={{
                         marginTop: 10,
                     }}
-                    data={items}
+                    data={filteredItems}
                     renderItem={({item}) => (
                         <CardStore 
                             onPress={() => navigation.navigate("Details", {item: item})}

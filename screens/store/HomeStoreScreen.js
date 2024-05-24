@@ -3,6 +3,9 @@ import React from "react";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { useStateValue } from "./StateContext";
 
 const MAIN_COLOR = "#22c55e";
@@ -24,12 +27,34 @@ const HomeStoreScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.categoryContainer}>
-            <Pressable style={styles.category} onPress={() => navigation.navigate("Discounts")}>
-                <Text style={styles.categoryText}>Discounts</Text>
-            </Pressable>
-            <Pressable style={styles.category} onPress={() => navigation.navigate("Icons")}>
-                <Text style={styles.categoryText}>Icons</Text>
-            </Pressable>
+          <Pressable
+            style={styles.categoryBackground}
+            onPress={() => navigation.navigate("Discounts")}
+          >
+            <View style={styles.category}>
+              <MaterialIcons
+                name="discount"
+                size={50}
+                color="white"
+                style={{ marginBottom: 10 }}
+              />
+              <Text style={styles.categoryText}>Discounts</Text>
+            </View>
+          </Pressable>
+          <Pressable
+            style={styles.categoryBackground}
+            onPress={() => navigation.navigate("Icons")}
+          >
+            <View style={styles.category}>
+              <MaterialCommunityIcons
+                name="dots-hexagon"
+                size={50}
+                color="white"
+                style={{ marginBottom: 10 }}
+              />
+              <Text style={styles.categoryText}>Icons</Text>
+            </View>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -69,23 +94,30 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: 50,
+    justifyContent: "space-between",
+  },
+  categoryBackground: {
+    backgroundColor: "#86efac",
+    width: "100%",
+    flex: 1,
+    marginVertical: 10,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   category: {
     width: 150,
     height: 150,
     borderRadius: 75,
     backgroundColor: MAIN_COLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   categoryText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white'
-  }
+    fontWeight: "bold",
+    color: "white",
+  },
 });
 
 export default HomeStoreScreen;
