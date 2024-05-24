@@ -7,7 +7,7 @@ import CardStore from '../../components/store/CardStore';
 import { useStateValue } from './StateContext';
 import { useAuth } from '../../components/AuthContext';
 
-const MainStoreScreen = ({navigation, route}) => {
+const DiscountStoreScreen = ({navigation, route}) => {
 
     const { coins, items, buyItem } = useStateValue()
 
@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default MainStoreScreen
+export default DiscountStoreScreen
