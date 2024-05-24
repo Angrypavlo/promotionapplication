@@ -12,7 +12,7 @@ export const StateProvider = ({ children }) => {
   // items available (for upgrade they could be fetched from a db)
   const discounts = [
       {
-          id: '1',
+          id: 1,
           title: 'Maxima 10%',
           description: 'Come to maxima for grocery shopping after your run',
           points: 50,
@@ -23,7 +23,7 @@ export const StateProvider = ({ children }) => {
           }
       },
       {
-          id: '2',
+          id: 2,
           title: 'Caffeine 5%',
           description: 'Caffeine is the best place to have a break during your run',
           points: 30,
@@ -34,7 +34,7 @@ export const StateProvider = ({ children }) => {
           }
       },
       {
-          id: '3',
+          id: 3,
           title: 'Dzeb Pub 15%',
           description: 'After your run come for karaoke',
           points: 70,
@@ -48,31 +48,31 @@ export const StateProvider = ({ children }) => {
 
   const icons = [
     {
-      id: '10',
+      id: 10,
       name: 'Bat Icon',
       points: 5,
       image: 'bat',
     },
     {
-      id: '11',
+      id: 11,
       name: 'Bird Icon',
       points: 5,
       image: 'bird',
     },
     {
-      id: '12',
+      id: 12,
       name: 'Cow Icon',
       points: 10,
       image: 'cow',
     },
     {
-      id: '13',
+      id: 13,
       name: 'Ilama Icon',
       points: 5,
       image: 'ilama',
     },
     {
-      id: '14',
+      id: 14,
       name: 'Panda Icon',
       points: 10,
       image: 'panda',
@@ -90,11 +90,13 @@ export const StateProvider = ({ children }) => {
       // if available points are more than cost of the item proceed with the purchase
       if(user.coins >= numPoints) {
 
+          const allItems = [...discounts, ...icons]
+
           // update points
           user.coins = coins - numPoints
 
           // add item to the owned list
-          const item = discounts.find((item) => item.id === id)
+          const item = allItems.find((item) => item.id === id)
           if (item) {
               if(ownedItems.length > 0){
                   setOwnedItems([...ownedItems, item])
