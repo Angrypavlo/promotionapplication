@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({email: 'pippo.baudo@gmail.com', coins: 38});
   const [authTokens, setAuthTokens] = useState({
     access_token: "",
     refresh_token: ""
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, authTokens, authenticate, logout, updateCoinCount, coinCount }}>
+    <AuthContext.Provider value={{ user, authTokens, authenticate, logout, updateCoinCount, coinCount, setUser }}>
       {children}
     </AuthContext.Provider>
   );

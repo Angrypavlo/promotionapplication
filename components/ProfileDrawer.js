@@ -14,9 +14,9 @@ const ProfileDrawer = (props) => {
       <View style={styles.drawerContainer}>
         <Image source={{ uri: profilePicUrl }} style={styles.profileImage} />
         <TouchableOpacity style={styles.button} onPress={() => {
-          props.navigation.navigate('Profile');
+          props.navigation.navigate('Friends');
         }}>
-          <Text>Profile</Text>
+          <Text>Friends</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => {
           logout();
