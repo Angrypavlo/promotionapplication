@@ -6,25 +6,29 @@ import ButtonWrapper from "../../Utils/ButtonWrapper";
 
 const MAIN_COLOR = "#22c55e";
 
-const UserComponent = ({ name, email, profilePicture, status }) => {
+const imageAssets = {
+  bat: require("../../../assets/icons/bat-icon.png"),
+  bird: require("../../../assets/icons/bird-icon.png"),
+  cow: require("../../../assets/icons/cow-icon.png"),
+  ilama: require("../../../assets/icons/ilama-icon.png"),
+  panda: require("../../../assets/icons/panda-icon.png"),
+};
+
+const UserComponent = ({ name, email, profilePicture, status, image, onPress }) => {
   const profilePicUrl =
     profilePicture || "https://avatar.iran.liara.run/public/boy?username=Ash";
-
-    const friendRequest = () => {
-        Alert.alert("Friend request sent to " + name)
-    }
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <Image source={{ uri: profilePicUrl }} style={styles.profileImage} />
+        <Image source={image ? imageAssets[image] : { uri: profilePicUrl }} style={styles.profileImage} />
         <View style={styles.textContainer}>
           <Text style={styles.headline}>{name}</Text>
           <Text>{email}</Text>
         </View>
       </View>
       {status == 0 && (
-        <ButtonWrapper style={styles.icon} onPress={friendRequest}>
+        <ButtonWrapper style={styles.icon} onPress={onPress}>
           <AntDesign name="adduser" size={24} color="black" />
         </ButtonWrapper>
       )}

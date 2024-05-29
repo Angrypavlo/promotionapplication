@@ -1,16 +1,24 @@
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  Pressable,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import UserComponent from "../../components/Home/Friends/UserComponent";
 import { TextInput } from "react-native-gesture-handler";
-
 import filter from "lodash.filter";
 
-const dummyData = [
+let dummyData = [
   {
     name: "Mario Rossi",
     email: "mario@rossi.com",
+    image: "panda",
     coins: 30,
-    status: 2,
+    status: 0,
   },
   {
     name: "Luigi Rossi",
@@ -21,26 +29,29 @@ const dummyData = [
   {
     name: "Mario Verdi",
     email: "mario@verdi.com",
+    image: "cow",
     coins: 20,
     status: 0,
   },
   {
     name: "Luigi Verdi",
     email: "luigi@verdi.com",
+    image: "bird",
     coins: 10,
-    status: 0, 
+    status: 0,
   },
   {
     name: "Pippo Baudo",
     email: "pippo@bianchi.com",
+    image: "bat",
     coins: 80,
-    status: 1,
+    status: 0,
   },
   {
     name: "Franco Bianchi",
     email: "franco@bianchi.com",
     coins: 60,
-    status: 2,
+    status: 0,
   },
   {
     name: "Lorenzo Rosa",
@@ -52,7 +63,7 @@ const dummyData = [
     name: "Matteo Vedi",
     email: "matteo@verdi.com",
     coins: 10,
-    status: 1,
+    status: 0,
   },
   {
     name: "Filippo Perla",
@@ -63,29 +74,42 @@ const dummyData = [
 ];
 
 const FriendsScreen = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState(dummyData);
 
-    const [searchQuery, setSearchQuery] = useState("")
-    const [data, setData] = useState(dummyData)
+  const [lastEmail, setLastEmail] = useState("");
+  const [lastName, setLastName] = useState("");
 
-    const handleSearch = (query) => {
-        setSearchQuery(query)
-        const formattedQuery = query.toLowerCase()
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [dummyData]);
 
-        const filteredData = filter(dummyData, (user) => {
-            return contains(user, formattedQuery)
-        })
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const formattedQuery = query.toLowerCase();
 
-        setData(filteredData)
-    }
+    const filteredData = filter(dummyData, (user) => {
+      return contains(user, formattedQuery);
+    });
 
-    const contains = ({ name, email }, query) => {
-        return name.includes(query) || email.includes(query)
-    }
+    setData(filteredData);
+  };
+
+  const contains = ({ name, email }, query) => {
+    return name.toLowerCase().includes(query) || email.toLowerCase().includes(query);
+  };
+
+  const updateUserStatus = (email, status) => {
+    dummyData = dummyData.map((user) =>
+      user.email === email ? { ...user, status: status } : user
+    );
+    handleSearch(searchQuery);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <TextInput
-      style={styles.searchBar}
+        style={styles.searchBar}
         placeholder="Search"
         clearButtonMode="always"
         autoCapitalize="none"
@@ -96,13 +120,41 @@ const FriendsScreen = () => {
       <FlatList
         style={styles.list}
         data={data}
+        keyExtractor={(item) => item.email}
         renderItem={({ item }) => (
           <UserComponent
             name={item.name}
             email={item.email}
             status={item.status}
+            image={item.image}
+            onPress={() => {
+              Alert.alert("Friendship request sent to " + item.name);
+
+              setLastEmail(item.email);
+              setLastName(item.name);
+
+              setTimeout(() => {
+                updateUserStatus(item.email, 1);
+              }, 500);
+            }}
           />
         )}
+      />
+      <Pressable
+        onPress={() => {
+          Alert.alert(lastName + " has accepted your friend request");
+
+          setTimeout(() => {
+            updateUserStatus(lastEmail, 2);
+          }, 500);
+        }}
+        style={{
+          position: "absolute",
+          bottom: 60,
+          left: 20,
+          width: 100,
+          height: 100,
+        }}
       />
     </SafeAreaView>
   );
@@ -111,18 +163,18 @@ const FriendsScreen = () => {
 export default FriendsScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 15,
-    },
-    searchBar: {
-        backgroundColor: '#ffffff',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        fontSize: 15,
-    },
-    list: {
-        marginBottom: 30,
-    },
-})
+  container: {
+    margin: 15,
+  },
+  searchBar: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    fontSize: 15,
+  },
+  list: {
+    marginBottom: 30,
+  },
+});

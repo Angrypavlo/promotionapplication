@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({email: 'pippo.baudo@gmail.com', coins: 29});
+  const [user, setUser] = useState({email: 'pippo.baudo@gmail.com', coins: 38});
   const [authTokens, setAuthTokens] = useState({
     access_token: "",
     refresh_token: ""

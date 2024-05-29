@@ -27,6 +27,19 @@ const RunStats = ({ timer, totalDistance, speed, coinCount }) => {
           <Text style={styles.infoValue}>{coinCount} coins</Text>
         </View>
       </View>
+      {/* <View
+        style={{
+          position: "absolute",
+          right: 5,
+          top: 70,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          backgroundColor: "#e8e8e8",
+          borderRadius: 10
+,        }}
+      >
+        <Text style={{ fontWeight: 'bold' }}>x2</Text>
+      </View> */}
     </View>
   );
 };
@@ -55,15 +68,28 @@ const styles = StyleSheet.create({
     fontSize: 52,
   },
   infoSubContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 5,
   },
   infoValueContainer: {
     alignItems: "center",
-    backgroundColor: '#efefef',
+    backgroundColor: "#efefef",
     margin: 5,
     padding: 5,
     borderRadius: 5,
+  },
+  infoValueContainerBoost: {
+    alignItems: "center",
+    backgroundColor: "#fbbf24",
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+  },
+  infoValueBoost: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 5,
+    color: "white",
   },
 });
 

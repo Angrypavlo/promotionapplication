@@ -15,7 +15,7 @@ export const useLocationTracker = () => {
 
   const [totalTimeRan, setTotalTimeRan] = useState(0);
   const { coinCount, updateCoinCount } = useAuth();
-  const speedRange = { min: 2, max: 10 };
+  const speedRange = { min: 2, max: 15 };
 
   useEffect(() => {
     const startWatching = async () => {
@@ -115,10 +115,10 @@ export const useLocationTracker = () => {
   }, [isTracking, speed]);
 
   useEffect(() => {
-    const coinsPerSecond = 1;
-    const newCoinCount = Math.floor(totalTimeRan / coinsPerSecond);
+    const coinsPerSecond = 0.03;
+    const newCoinCount = Math.floor(totalDistance / coinsPerSecond);
     updateCoinCount(newCoinCount);
-  }, [totalTimeRan, updateCoinCount]);
+  }, [totalDistance, updateCoinCount]);
 
   // Cleanup on unmount
   useEffect(() => {

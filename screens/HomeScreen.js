@@ -111,21 +111,24 @@ const Screen = ({ navigation }) => {
 
   // ==================================== HOT ZONES =====================================
 
-  useEffect(() => {
-    fetch(
-      "https://3000--main--pro-backend--dzmykolas.coder.dzmykolas.place/location"
-    )
-      .then((response) => response.json())
-      .then((json) => {
-        setX({ latitude: json.coordinates.x, longitude: json.coordinates.y });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch(
+  //     "https://3000--main--pro-backend--dzmykolas.coder.dzmykolas.place/location"
+  //   )
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       setX({ latitude: json.coordinates.x, longitude: json.coordinates.y });
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
 
   // coordinates of the hot zone
-  const [x, setX] = useState({});
+  const [x, setX] = useState({
+    latitude: 37.323,
+    longitude: -122.024,
+  });
   const [focusedX, setFocusedX] = useState(false);
 
   // route duration
@@ -159,65 +162,25 @@ const Screen = ({ navigation }) => {
   // ==================================== OTHER USERS =====================================
   const [users, setUsers] = useState([
     {
-      name: "user1",
+      name: "luigi",
       coordinate: new AnimatedRegion({
-        latitude: 37.334,
-        longitude: -122.0325,
-      }),
-    },
-    {
-      name: "user2",
-      coordinate: new AnimatedRegion({
-        latitude: 37.3303,
-        longitude: -122.0335,
+        latitude: 37.3318,
+        longitude: -122.0307,
       }),
     },
   ]);
 
-  // const updatedUsers = [
-  //   {
-  //     name: "pippo1",
-  //     coordinate: {
-  //       latitude: 37.336,
-  //       longitude: -122.0311,
-  //     },
-  //   },
-  //   {
-  //     name: "pippo2",
-  //     coordinate: {
-  //       latitude: 37.3303,
-  //       longitude: -122.033,
-  //     },
-  //   },
-  //   {
-  //     name: "pippo3",
-  //     coordinate: {
-  //       latitude: 37.329,
-  //       longitude: -122.0343,
-  //     },
-  //   },
-  // ];
+  const [visible, setVisible] = useState(false)
 
-  const updateOtherUsers = () => {
+  const updateOtherUsers = (latDelta, longDelta) => {
     const updatedUsers = [
       {
-        name: "user1",
+        name: "luigi",
         coordinate: {
           latitude:
-            users.find((u) => u.name === "user1").coordinate.latitude._value -
-            0.0005,
-          longitude: users.find((u) => u.name === "user1").coordinate.longitude
-            ._value,
-        },
-      },
-      {
-        name: "user2",
-        coordinate: {
-          latitude: users.find((u) => u.name === "user2").coordinate.latitude
-            ._value,
-          longitude:
-            users.find((u) => u.name === "user2").coordinate.longitude._value +
-            0.0005,
+            users.find((u) => u.name === "luigi").coordinate.latitude._value - latDelta,
+          longitude: users.find((u) => u.name === "luigi").coordinate.longitude
+            ._value - longDelta,
         },
       },
     ];
@@ -266,11 +229,11 @@ const Screen = ({ navigation }) => {
             </View>
           )}
 
-          {users.length > 0 &&
-            users.map(({ name, coordinate }, index) => {
+          {visible && users.length > 0 &&
+            users.map(({ name, coordinate, image }, index) => {
               return (
                 <Marker.Animated key={index} coordinate={coordinate}>
-                  <UserMarker name={name} />
+                  <UserMarker name={name} image={image}/>
                 </Marker.Animated>
               );
             })}
@@ -350,9 +313,43 @@ const Screen = ({ navigation }) => {
           right: 20,
           width: 50,
           height: 50,
+          // backgroundColor: 'red'
         }}
-        onPress={() => updateOtherUsers()}
-      ></Pressable>
+        onPress={() => updateOtherUsers(0.0005, -0.0005)}
+      />
+      <Pressable
+        style={{
+          position: "absolute",
+          bottom: 75,
+          right: 20,
+          width: 50,
+          height: 50,
+          // backgroundColor: 'green'
+        }}
+        onPress={() => updateOtherUsers(0, -0.0001)}
+      />
+      <Pressable
+        style={{
+          position: "absolute",
+          bottom: 20,
+          right: 75,
+          width: 50,
+          height: 50,
+          // backgroundColor: 'blue'
+        }}
+        onPress={() => updateOtherUsers(0.0001, 0)}
+      />
+      <Pressable
+        style={{
+          position: "absolute",
+          bottom: 75,
+          right: 75,
+          width: 50,
+          height: 50,
+          // backgroundColor: 'yellow'
+        }}
+        onPress={() => setVisible(true)}
+      />
       <Modal
         animationType="slide"
         transparent={false}
