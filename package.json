@@ -34,7 +34,10 @@
     "react-native-reanimated": "~3.6.2",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
-    "react-native-webview": "13.6.4"
+    "react-native-webview": "13.6.4",
+    "expo-notifications": "~0.27.7",
+    "expo-device": "~5.9.4",
+    "expo-constants": "~15.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
